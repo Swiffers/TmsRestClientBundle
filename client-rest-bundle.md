@@ -1,156 +1,185 @@
-#######################
-## API CONFIGURATION ##
-#######################
+# TMS REST CLIENT #
 
+## API CONFIGURATION ##
+
+```yml
 tms_rest_client:
     crawlers:
         operation_manager:
             da_api_client: da_api_client.api.operation
-            resources: 
-                offers:
-                    path: "/offers"
-                    methods:
-                        patchStatus:
-                            path:       "/{id}/status"
-                            method:     PATCH
-                            arguments:  []
+                resources: 
+                    offers:
+                        path: "/offers"
+                        methods:
+                            patchStatus:
+                                path:       "/{id}/status"
+                                method:     PATCH
+                                arguments:  []
+    
+                    operations: 
+                        path: "/operations"
+    
+                    operation_offers:
+                        path: "/operations/{id}/offers"
+    
+                    sfr_offers:
+                        path: "/customer/1/offers"
+        hydrators:
+            Tms\Bundle\OperationBundle\Entity: OfferHydrator
+```
 
-                operations: 
-                    path: "/operations"
+## API METHODS ##
 
-                operation_offers:
-                    path: "/operations/{id}/offers"
+### HYPERMEDIA COLLECTION ###
 
-                sfr_offers:
-                    path: "/customer/1/offers"
-
-tms_rest_client:
-    namespaces:
-        operation:
-            resources:
-                offer:
-                    da_api_client: da_api_client.api.operation
-                    api:
-                        find:
-                            path: /offers
-                            method: GET
-                            #hydrator: 'hypermedia_single'
-                            defaultParameters:  []
-        #object_hydrators:
-            #offer: \Tms\OperationClientBundle\Entity\Offer
-            #operation: \Tms\OperationClientBundle\Entity\Operation
-
-à discuter :
-* hydrator dans config api
-* type dans metadata (namespace VS nom entity)
-* single / item / element
-* methode patch avec hypermediaManager (cf en bas)
-
-notes : 
-* hypermediacollection implémente iterator
-* lastPage / firstPage / goToPage vont être ajoutés
-* AUTO_SWITCH_PAGE_OFF sur une collection pour automatiser le passage à la page suivante
-
-#####################
-## CRAWLER METHODS ##
-#####################
-
----------------------------
-## HYPERMEDIA COLLECTION ##
----------------------------
-
-# FIND ALL
+*Find all*
+```php
 $hypermediaCollection = $this
-    ->get('tms_rest_client.operation.offers')
+    ->get('tms_rest_client.crawlers.operation_manager.offers')
     ->findAll($query, HypermediaCollection::AUTO_SWITCH_PAGE_OFF / ON)
 ;
+```
 
-# METADATA
-$hypermediaCollection->getMetaData($metadataName = null);
+*Get a metadata*
+```php
+$hypermediaCollection->getMetaData($metadataName, $default);
+```
 
-# DATA
+*Get all metadata*
+```php
+$hypermediaCollection->getAllMetaData();
+```
+
+*Has metadata*
+```php
+$hypermediaCollection->hasMetaData($metadataName);
+```
+
+*Get data*
+```php
 $hypermediaCollection->getData();
+```
 
-# NEXT
+*Go to next page*
+```php
 $hypermediaCollection
     ->nextPage()
     ->nextPage()
     ->nextPage()
 ;
+```
 
-# PREVIOUS
+*Go to previous page*
+```php
 $hypermediaCollection
     ->previousPage()
     ->previousPage()
     ->previousPage()
 ;
+```
 
-# LAST
+*Go to last page*
+```php
 $hypermediaCollection->lastPage();
+```
 
-# FIRST
+*Go to first page*
+```php
 $hypermediaCollection->firstPage();
+```
 
-# GOTO
-$hypermediaCollection->goToPage($page);
+*Go to page X*
+```php
+$hypermediaCollection->page($page);
+```
 
-# LOOP
-while($hypermediaCollection->next() != null) {
-    $element = $hypermediaCollection->current();
-}
+*Get the links*
+```php
+$hypermediaCollection->getLinks();
+```
 
+*Get a link*
+```php
+$hypermediaCollection->getLink($linkName);
+```
+
+*Has a link*
+```php
+$hypermediaCollection->hasLink($linkName);
+```
+
+*Follow a link*
+```php
+$hypermediaCollection->followLink($linkName, $linkParams, $isCrawlable);
+```
+
+*Loop*
+```php
 foreach ($hypermediaCollection as $hypermediaSingle) {
     $single = $hypermediaSingle->getData();
 }
+```
 
-----------------------------------------
-## HYPERMEDIA SINGLE / ITEM / ELEMENT ##
-----------------------------------------
+### HYPERMEDIA ITEM ###
 
-# FIND ONE
-$hypermediaSingle = $this
-    ->get('tms_rest_client.operation.offers')
+*Find one*
+```php
+$hypermediaItem = $this
+    ->get('tms_rest_client.crawlers.operation_manager.offers')
     ->findOneBy(array('id' => 1))
 ;
+```
 
-# EMBEDDED
-$hypermediaCollection = $hypermediaSingle->getEmbedded($embeddedName = null);
+*Get embedded*
+```php
+$hypermediaItem = $hypermediaSingle->getEmbedded($embeddedName = null);
+```
 
-# METADATA
-$hypermediaSingle->getMetaData($metadataName = null);
+*Get metadata*
+```php
+$hypermediaItem->getMetaData($metadataName = null);
+```
 
-# DATA
-$hypermediaSingle->getData(HyperMediaSingle::HYDRATOR_MODE_ASSOC/HYDRATOR_MODE_OBJECT);
+*Get data*
+```php
+$hypermediaItem->getData(HyperMediaSingle::HYDRATOR_MODE_ASSOC/HYDRATOR_MODE_OBJECT);
+```
+
+*Get the links*
+```php
+$hypermediaItem->getLinks();
+```
+
+*Get a link*
+```php
+$hypermediaItem->getLink($linkName);
+```
+
+*Has a link*
+```php
+$hypermediaItem->hasLink($linkName);
+```
+
+*Follow a link*
+```php
+$hypermediaItem->followLink($linkName, $linkParams, $isCrawlable);
+```
 
 ------------------------------------------
 
-# DELETE
-$this->get('tms_rest_client.operation.offers')->delete($hypermediaSingle);
+*Delete an item*
+```php
+$this->get('tms_rest_client.operation.offers')->delete($hypermediaItem);
+```
 
-# UPDATE
-$this->get('tms_rest_client.operation.offers')->update($hypermediaSingle);
+*Update an item*
+```php
+$this->get('tms_rest_client.operation.offers')->update($hypermediaItem);
+```
 
-# FIELD PATCH
-$this
-    ->get('tms_rest_client.operation.offers')
-    ->patchField($hypermediaSingle, array($key => $value))
-;
-
-###############
 ## HYDRATORS ##
-###############
 
-HydratorInterface implémentée par
+HydratorInterface implémentée par :
+
 * ArrayHydrator
 * ObjectHydrator
-
-----------------------------
-OOP
-$product->sell($user);
-$user->buy($product);
-$user->buy($product, $store);
-
-SOA
-$saleHandler = new SaleHandler();
-$saleHandler->sell($product, $user, $store);
-
