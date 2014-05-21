@@ -1,0 +1,10 @@
+tms_rest_client:
+    crawlers:
+        operation_manager:
+            da_api_client: da_api_client.api.operation
+            resources:
+                offers:
+                    path: "/offers"
+
+                operations: 
+                    path: "/operations"

@@ -1,0 +1,7 @@
+api_rest_client_offers:
+    path:      /api/rest/client/offers
+    defaults:  { _controller: TmsRestClientBundle:ApiOffer:getOffers }
+
+api_rest_client_offers_offer:
+    path:      /api/rest/client/offers/{id}
+    defaults:  { _controller: TmsRestClientBundle:ApiOffer:getOffer }

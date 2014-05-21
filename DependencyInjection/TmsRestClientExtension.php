@@ -3,7 +3,7 @@
 /**
  *
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
- * @author:  Jean-Philippe CHATEAU <jp.chateau@trepia.fr>
+ * @author:  Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
  * @license: GPL
  *
  */

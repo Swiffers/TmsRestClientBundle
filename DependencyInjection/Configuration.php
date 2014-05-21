@@ -4,12 +4,11 @@
  *
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
  * @author:  Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
- * @author:  Jean-Philippe CHATEAU <jp.chateau@trepia.fr>
  * @license: GPL
  *
  */
 
-namespace Tms\Bundle\RestBundle\DependencyInjection;
+namespace Tms\Bundle\RestClientBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

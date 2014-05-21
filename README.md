@@ -1,7 +1,7 @@
 RestBundle
 ===========================
 
-Symfony2 REST bundle
+Symfony2 REST Client bundle
 
 
 Installation
@@ -13,12 +13,12 @@ Add dependencies in your `composer.json` file:
     ...,
     {
         "type": "vcs",
-        "url": "https://github.com/Tessi-Tms/TmsRestBundle.git"
+        "url": "https://github.com/Tessi-Tms/TmsRestClientBundle.git"
     }
 ],
 "require": {
         ...,
-        "tms/rest-bundle": "dev-master"
+        "tms/rest-client-bundle": "dev-master"
     },
 ```
 
@@ -36,7 +36,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Tms\Bundle\RestBundle\TmsRestBundle(),
+        new Tms\Bundle\RestBundle\TmsRestClientBundle(),
     );
 }
 ```
@@ -46,23 +46,13 @@ Import the bundle configuration:
 # app/config/config.yml
 
 imports:
-    - { resource: @TmsRestBundle/Resources/config/config.yml }
+    - { resource: @TmsRestClientBundle/Resources/config/config.yml }
 ```
 
 To check if every thing seem to be ok, you can execute this command:
 ```sh
 $ php app/console container:debug
 ```
-
-You'll get this result:
-```sh
-...
-tms_rest.criteria_builder   container Tms\Bundle\RestBundle\Criteria\CriteriaBuilder
-tms_rest.entity_handler     container Tms\Bundle\RestBundle\EntityHandler\EntityHandler
-tms_rest.sort_builder       container Tms\Bundle\RestBundle\Sort\SortBuilder
-...
-```
-
 
 Documentation
 -------------
