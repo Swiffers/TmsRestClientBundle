@@ -18,54 +18,68 @@ use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
  */
 class HypermediaCollectionIteratorTest extends \PHPUnit_Framework_TestCase
 {
-    private $collection = array(
+    private $raw = array(
         'data' => array('a', 'b', 'c', 'd', 'e')
     );
 
     public function testCurrent()
     {
         $iterator = new HypermediaCollectionIterator(
-            new HypermediaCollection($this->collection)
+            new HypermediaCollection($this->raw)
         );
 
         $this->assertEquals('a', $iterator->current());
-        
-        $iterator->next(); // b
-        $this->assertEquals('b', $iterator->current());
     }
 
     public function testNext()
     {
         $iterator = new HypermediaCollectionIterator(
-            new HypermediaCollection($this->collection)
+            new HypermediaCollection($this->raw)
         );
 
-        $this->assertEquals('b', $iterator->next());
+        $iterator->next();
+        $this->assertEquals('b', $iterator->current());
         
-        $iterator->next(); // c
-        $iterator->next(); // d
-        $iterator->next(); // e
+        $iterator
+            ->next() // c
+            ->next() // d
+        ;
+        $this->assertEquals('d', $iterator->current());
 
         $this->setExpectedException('Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
-        $iterator->next(); // throw new NotFoundHttpException() ?
-            
+        $iterator
+            ->next() // e
+            ->next() // Error
+        ;
+        $iterator->current(); // NotFoundHttpException?
     }
 
     public function testPrevious()
     {
         $iterator = new HypermediaCollectionIterator(
-            new HypermediaCollection($this->collection)
+            new HypermediaCollection($this->raw)
         );
-        $iterator->next(); // b
-        $iterator->next(); // c
 
-        $this->assertEquals('b', $iterator->previous());
+        $iterator
+            ->next() // b
+            ->next() // c
+        ;
+
+        $iterator->previous(); // b ?
+        $this->assertEquals('b', $iterator->current());
+
+        $this->setExpectedException('Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
+        $iterator
+            ->previous() // a
+            ->previous() // Error
+        ;
+        $iterator->current(); // NotFoundHttpException?
     }
 
     public function testKey()
     {
         $iterator = new HypermediaCollectionIterator(
-            new HypermediaCollection($this->collection)
+            new HypermediaCollection($this->raw)
         );
 
         $this->assertEquals(0, $iterator->key());
@@ -80,12 +94,57 @@ class HypermediaCollectionIteratorTest extends \PHPUnit_Framework_TestCase
     public function testRewind()
     {
         $iterator = new HypermediaCollectionIterator(
-            new HypermediaCollection($this->collection)
+            new HypermediaCollection($this->raw)
         );
-        $iterator->next(); // b
-        $iterator->next(); // c
+
+        $iterator
+            ->next() // b
+            ->next() // c
+        ;
         $iterator->rewind(); // a?
 
         $this->assertEquals(0, $iterator->key());
+    }
+
+    public function testUnwind()
+    {
+        $iterator = new HypermediaCollectionIterator(
+            new HypermediaCollection($this->raw)
+        );
+
+        $iterator
+            ->next() // b
+            ->next() // c
+        ;
+        $iterator->unwind();
+
+        $this->assertEquals(count($this->raw['data']), $iterator->key());
+    }
+
+    public function testValid()
+    {
+        $iterator = new HypermediaCollectionIterator(
+            new HypermediaCollection($this->raw)
+        );
+
+        $iterator
+            ->next() // b
+            ->next() // c
+            ->next() // d
+            ->next() // e
+        ;
+
+        $this->assertEquals(true, $iterator->valid());
+    }
+
+    public function testLoop()
+    {
+        $hypermediaCollection = new HypermediaCollection($this->raw);
+        $iterator = new HypermediaCollectionIterator($hypermediaCollection);
+
+        foreach($hypermediaCollection as $item) {
+            $this->assertEquals($item, $iterator->current());
+            $iterator->next();
+        }
     }
 }

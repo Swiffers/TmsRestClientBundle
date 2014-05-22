@@ -14,6 +14,8 @@ namespace Tms\Bundle\RestClientBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Offer API REST controller
@@ -52,12 +54,10 @@ class ApiOfferController extends Controller
             var_dump($hypermediaCollection); die;
         } catch (\Da\ApiClientBundle\Exception\ApiHttpResponseException $e) {
             switch ($e->getHttpCode()) {
-                // Handle specific http error code here.
                 case '404':
-                    throw new HttpNotFoundException("No object found.");
+                    throw new HttpNotFoundException();
                 case '500':
-                    throw new Exception();
-                    break;
+                    throw new AccessDeniedHttpException();
             }
         }
     }
@@ -78,12 +78,10 @@ class ApiOfferController extends Controller
             var_dump($hypermediaItem); die;
         } catch (\Da\ApiClientBundle\Exception\ApiHttpResponseException $e) {
             switch ($e->getHttpCode()) {
-                // Handle specific http error code here.
                 case '404':
-                    throw new HttpNotFoundException("No object found.");
+                    throw new HttpNotFoundException();
                 case '500':
-                    throw new Exception();
-                    break;
+                    throw new AccessDeniedHttpException();
             }
         }
     }

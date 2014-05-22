@@ -11,7 +11,7 @@
 namespace Tms\Bundle\RestClientBundle\Iterator;
 
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * HypermediaCollectionIterator
@@ -19,35 +19,54 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class HypermediaCollectionIterator implements \Iterator
 {
     private $cursor = 0;
-    private $collection;
+    private $hypermediaCollection;
 
-    function __construct(HypermediaCollection $collection)
+    /**
+     * Constructor
+     */
+    function __construct(HypermediaCollection $hypermediaCollection)
     {
         $this->cursor = 0;
-        $this->collection = $collection;
+        $this->hypermediaCollection = $hypermediaCollection;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function current()
     {
-        $data = $this->collection->getData();
+        $data = $this->hypermediaCollection->getData();
  
+        if(!$this->valid()) {
+            throw new NotFoundHttpException();
+        }
+
         return $data[$this->cursor];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function key()
     {
         return $this->cursor;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasNext()
     {
-        if ($this->cursor+1 >= count($this->collection->getData())) {
+        if ($this->cursor+2 > count($this->hypermediaCollection->getData())) {
             return false;
         }
 
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasPrevious()
     {
         if ($this->cursor-1 < 0) {
@@ -57,36 +76,50 @@ class HypermediaCollectionIterator implements \Iterator
         return true;
     }
  
+    /**
+     * {@inheritdoc}
+     */
     public function next()
     {
-        if(!$this->hasNext()) {
-            throw new NotFoundHttpException();
-        }
-        
-        $data = $this->collection->getData();
+        $this->cursor++;
 
-        return $data[++$this->cursor];
+        return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function previous()
     {
-        if (!$this->hasPrevious()) {
-            throw new NotFoundHttpException();
-        }
-
-        $data = $this->collection->getData();
+        $this->cursor--;
  
-        return $data[--$this->cursor];
+        return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rewind()
     {
         $this->cursor = 0;
     }
 
+    /**
+     * Unwind the cursor to the last index
+     */
+    public function unwind()
+    {
+        $this->cursor = count($this->hypermediaCollection->getData());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function valid()
     {
-        return isset($this->collection[$this->cursor]);
+        $data = $this->hypermediaCollection->getData();
+
+        return isset($data[$this->cursor]);
     }
 
 }

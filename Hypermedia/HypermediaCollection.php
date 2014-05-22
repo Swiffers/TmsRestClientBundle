@@ -10,36 +10,61 @@
 
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
+use Tms\Bundle\RestClientBundle\Iterator\HypermediaCollectionIterator;
+
 /**
  * HypermediaCollection
  */
 class HypermediaCollection extends AbstractHypermedia implements \IteratorAggregate
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
-        return new HypermediaCollectionIterator($this->getData());
+        return new HypermediaCollectionIterator($this);
     }
 
+    /**
+     * Follow the nextPage link
+     * 
+     */
     public function nextPage()
     {
-        $this->followLink('next');
+        $this->followLink('nextPage');
     }
 
+    /**
+     * Follow the previousPage link
+     * 
+     */
     public function previousPage()
     {
-        $this->followLink('previous');
+        $this->followLink('previousPage');
     }
 
+    /**
+     * Follow the lastPage link
+     * 
+     */
     public function lastPage()
     {
-        $this->followLink('lasts');
+        $this->followLink('lastPage');
     }
 
+    /**
+     * Follow the firstPage link
+     * 
+     */
     public function firstPage()
     {
-        $this->followLink('first');
+        $this->followLink('firstPage');
     }
 
+    /**
+     * Follow a specific page number link
+     * 
+     */
     public function page($page)
     {
         
