@@ -64,9 +64,28 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     /**
      * Follow a specific page number link
      * 
+     * @param integer $page
+     * 
      */
     public function page($page)
     {
-        
+        return $this->followLink(
+            'self', 
+            array('page' => $page)
+        );
+    }
+
+    /**
+     * Follow an url to retrieve new hypermedia object
+     * 
+     * @param string  $name
+     * @param string  $params
+     * @return HypermediaCollection
+     */
+    public function followLink($name, $params = array())
+    {
+        return new HypermediaCollection(
+            $this->crawler->get($this->getLinkUrl($name), $params)
+        );
     }
 }

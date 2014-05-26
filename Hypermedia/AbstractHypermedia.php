@@ -15,9 +15,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * AbstractHypermedia
  */
-class AbstractHypermedia
+abstract class AbstractHypermedia
 {
     protected $raw;
+    protected $crawler;
 
     /**
      * Constructor
@@ -30,7 +31,7 @@ class AbstractHypermedia
     /**
      * Get a specific metadata
      * 
-     * @param $name
+     * @param string $name
      * @return mixed $metadata
      */
     public function getMetadata($name)
@@ -43,9 +44,9 @@ class AbstractHypermedia
     }
 
     /**
-     * Check if a specific metadata is existing
+     * Check if a specific metadata exists
      * 
-     * @param $name
+     * @param string $name
      * @return boolean
      */
     public function hasMetadata($name)
@@ -86,8 +87,8 @@ class AbstractHypermedia
     /**
      * Get a specific link
      * 
-     * @param $name
-     * @return string
+     * @param string $name
+     * @return array
      */
     public function getLink($name)
     {
@@ -99,9 +100,20 @@ class AbstractHypermedia
     }
 
     /**
+     * Check if a specific link exists
+     * 
+     * @param string $name
+     * @return boolean
+     */
+    public function hasLink($name)
+    {
+        return isset($this->raw['links'][$name]);
+    }
+
+    /**
      * Get a link URL
      * 
-     * @param $name
+     * @param string $name
      * @return string URL
      */
     public function getLinkUrl($name)
@@ -112,33 +124,11 @@ class AbstractHypermedia
     }
 
     /**
-     * Check if a specific link is existing
-     * 
-     * @param $name
-     * @return boolean
-     */
-    public function hasLink($name)
-    {
-        return isset($this->raw['links'][$name]);
-    }
-
-    /**
-     * Follow an url to retrieve new hypermedia object
-     * 
-     * @param $url
-     */
-    public function followUrl($url)
-    {
-        
-    }
-
-    /**
      * Follow a link name to retrieve new hypermedia object
      * 
-     * @param $name
+     * @param string  $name
+     * @param string  $params
+     * @return mixed HypermediaCollection OR HypermediaItem
      */
-    public function followLink($name)
-    {
-        $this->followUrl($this->getLinkUrl($name));
-    }
+    abstract public function followLink($name, $params = array());
 }

@@ -19,22 +19,22 @@ class HypermediaItem extends AbstractHypermedia
      * Get embedded links
      * 
      */
-    public function getEmbeddeds()
+    public function getEmbeddedLinks()
     {
-        return $this->raw['embeddeds'];
+        return $this->raw['links']['embeddeds'];
     }
 
     /**
      * Get a specific embedded link
      * 
-     * @param $name
+     * @param string $name
      * @return string
      * 
      */
-    public function getEmbedded($name)
+    public function getEmbeddedLink($name)
     {
         if($this->hasEmbedded($name)) {
-            return $this->raw['embeddeds'][$name];
+            return $this->raw['links']['embeddeds'][$name];
         }
 
         throw new HttpNotFoundException(sprintf("No '%s' embedded found.", $name));
@@ -43,7 +43,7 @@ class HypermediaItem extends AbstractHypermedia
     /**
      * Get a specific embedded link URL
      * 
-     * @param $name
+     * @param string $name
      * @return string URL
      * 
      */
@@ -55,25 +55,42 @@ class HypermediaItem extends AbstractHypermedia
     }
 
     /**
-     * Check if a specific embedded link is existing
+     * Check if a specific embedded link exists
      * 
-     * @param $name
+     * @param string $name
      * @return boolean
      * 
      */
     public function hasEmbedded($name)
     {
-        return isset($this->raw['embeddeds'][$name]);
+        return isset($this->raw['links']['embeddeds'][$name]);
     }
 
     /**
-     * Follow a specific embedded link
+     * Follow an embedded link to retrieve new hypermedia object
      * 
-     * @param $name
+     * @param string $name
+     * @param string  $params
      * 
      */
-    public function followEmbedded($name)
+    public function followEmbedded($name, $params = array())
     {
-       $this->followUrl($this->getEmbeddedUrl($name));
+        return new HypermediaCollection(
+            $this->crawler->get($this->getEmbeddedUrl($name), $params)
+        );
+    }
+
+    /**
+     * Follow a link to retrieve new hypermedia object
+     * 
+     * @param string $name
+     * @param string  $params
+     * @return HypermediaCollection
+     */
+    public function followLink($name, $params = array())
+    {
+        return new HypermediaItem(
+            $this->crawler->get($this->getLinkUrl($name), $params)
+        );
     }
 }
