@@ -70,27 +70,31 @@ class HypermediaItem extends AbstractHypermedia
      * Follow an embedded link to retrieve new hypermedia object
      * 
      * @param string $name
-     * @param string  $params
+     * @return HypermediaCollection
      * 
      */
-    public function followEmbedded($name, $params = array())
+    public function followEmbedded($name)
     {
-        return new HypermediaCollection(
-            $this->crawler->get($this->getEmbeddedUrl($name), $params)
-        );
+        return $this
+            ->crawlerHandler
+            ->guessCrawler($this->getLinkUrlPath($name))
+            ->findAll($this->getLinkUrlQueryArray($name))
+        ;
     }
 
     /**
      * Follow a link to retrieve new hypermedia object
      * 
      * @param string $name
-     * @param string  $params
-     * @return HypermediaCollection
+     * @return HypermediaItem
      */
-    public function followLink($name, $params = array())
+    public function followLink($name)
     {
-        return new HypermediaItem(
-            $this->crawler->get($this->getLinkUrl($name), $params)
-        );
+        var_dump($this->getLinkUrlPath($name)); die;
+        return $this
+            ->crawlerHandler
+            ->guessCrawler($this->getLinkUrlPath($name))
+            ->find($this->getLinkUrlQueryArray($name))
+        ;
     }
 }

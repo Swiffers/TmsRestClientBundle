@@ -11,20 +11,24 @@
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler;
 
 /**
  * AbstractHypermedia
  */
 abstract class AbstractHypermedia
 {
+    protected $crawlerHandler;
     protected $raw;
-    protected $crawler;
 
     /**
      * Constructor
+     * 
+     * @param array $raw
      */
-    public function __construct($raw)
+    public function __construct(HypermediaCrawlerHandler $crawlerHandler, array $raw)
     {
+        $this->crawlerHandler = $crawlerHandler;
         $this->raw = $raw;
     }
 
@@ -124,11 +128,36 @@ abstract class AbstractHypermedia
     }
 
     /**
+     * Get a link query array
+     * 
+     * @param string $name
+     * @return array
+     */
+    public function getLinkUrlQueryArray($name)
+    {
+        $queryString = parse_url($this->getLinkUrl($name), PHP_URL_QUERY);
+        parse_str($queryString, $queryArray);
+
+        return $queryArray;
+    }
+
+    /**
+     * Get a link path
+     * 
+     * @param string $name
+     * @return string
+     */
+    public function getLinkUrlPath($name)
+    {
+        return parse_url($this->getLinkUrl($name), PHP_URL_PATH);
+    }
+    
+
+    /**
      * Follow a link name to retrieve new hypermedia object
      * 
      * @param string  $name
-     * @param string  $params
      * @return mixed HypermediaCollection OR HypermediaItem
      */
-    abstract public function followLink($name, $params = array());
+    abstract public function followLink($name);
 }

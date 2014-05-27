@@ -22,19 +22,34 @@ class CrawlerCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('tms_rest_client.crawler')) {
+        if (!$container->hasDefinition('tms_rest_client.crawler') || !$container->hasDefinition('tms_rest_client.crawler.handler') ) {
             return;
         }
 
         $configuration = $container->getParameter('tms_rest_client.configuration');
         $crawlersConfiguration = $configuration['crawlers'];
+    
+        $handlerDefinition = $container->getDefinition('tms_rest_client.crawler.handler');
 
         foreach($crawlersConfiguration as $crawlerName => $crawlerConfiguration) {
-            $crawlerDefinition = new DefinitionDecorator('tms_rest_client.crawler');
-            $crawlerDefinition->replaceArgument(0, new Reference($crawlerConfiguration['da_api_client']));
+            foreach($crawlerConfiguration['resources'] as $crawlerResourceName => $crawlerResource) {
+                $crawlerDefinition = new DefinitionDecorator('tms_rest_client.crawler');
+                $crawlerDefinition->replaceArgument(0, new Reference($crawlerConfiguration['da_api_client']));
+                $crawlerDefinition->replaceArgument(1, $crawlerName);
+                $crawlerDefinition->replaceArgument(2, $crawlerResource);
 
-            $crawlerServiceId = sprintf("tms_rest_client.crawler.%s", $crawlerName);
-            $container->setDefinition($crawlerServiceId, $crawlerDefinition);
+                $crawlerServiceId = sprintf(
+                    "tms_rest_client.crawlers.%s.%s",
+                    $crawlerName,
+                    $crawlerResourceName
+                );
+                $container->setDefinition($crawlerServiceId, $crawlerDefinition);
+        
+                $handlerDefinition->addMethodCall(
+                    'setCrawler',
+                    array(new Reference($crawlerServiceId), $crawlerServiceId)
+                );
+            }
         }
     }
 }

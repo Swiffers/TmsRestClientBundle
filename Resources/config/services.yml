@@ -1,8 +1,12 @@
 parameters:
-    tms_rest_client.crawler.class: Tms\Bundle\RestClientBundle\Crawler\AbstractHypermediaCrawler
+    tms_rest_client.crawler.handler.class: Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler
+    tms_rest_client.crawler.class: Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawler
 
 services:
+    tms_rest_client.crawler.handler:
+        class: %tms_rest_client.crawler.handler.class%
+
     tms_rest_client.crawler:
         class: %tms_rest_client.crawler.class%
-        arguments: [null]
+        arguments: [null, null, null]
         abstract: true
