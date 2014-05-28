@@ -49,9 +49,34 @@ class HypermediaItem extends AbstractHypermedia
      */
     public function getEmbeddedUrl($name)
     {
-        $link = $this->getEmbedded($name);
+        $link = $this->getEmbeddedLink($name);
         
         return $link['href'];
+    }
+
+    /**
+     * Get a specific embedded link query array
+     * 
+     * @param string $name
+     * @return array
+     */
+    public function getEmbeddedUrlQueryArray($name)
+    {
+        $queryString = parse_url($this->getEmbeddedUrl($name), PHP_URL_QUERY);
+        parse_str($queryString, $queryArray);
+
+        return $queryArray;
+    }
+
+    /**
+     * Get a specific embedded link path
+     * 
+     * @param string $name
+     * @return string
+     */
+    public function getEmbeddedUrlPath($name)
+    {
+        return parse_url($this->getEmbeddedUrl($name), PHP_URL_PATH);
     }
 
     /**
@@ -69,16 +94,21 @@ class HypermediaItem extends AbstractHypermedia
     /**
      * Follow an embedded link to retrieve new hypermedia object
      * 
-     * @param string $name
+     * @param string $currentName
+     * @param string $embeddedName
      * @return HypermediaCollection
      * 
      */
-    public function followEmbedded($name)
+    public function followEmbedded($currentName, $embeddedName)
     {
+        // TODO : Get ID in path
+        $explodedPath = explode('/', $this->getEmbeddedUrlPath($embeddedName));
+        $id = $explodedPath[count($explodedPath)-1];
+
         return $this
             ->crawlerHandler
-            ->guessCrawler($this->getLinkUrlPath($name))
-            ->findAll($this->getLinkUrlQueryArray($name))
+            ->guessCrawler($this->getEmbeddedUrlPath($embeddedName))
+            ->findAll(array($currentName => $id))
         ;
     }
 
@@ -90,11 +120,13 @@ class HypermediaItem extends AbstractHypermedia
      */
     public function followLink($name)
     {
-        var_dump($this->getLinkUrlPath($name)); die;
+        $explodedPath = explode('/', $this->getLinkUrlPath($name));
+        $id = $explodedPath[count($explodedPath)-1];
+
         return $this
             ->crawlerHandler
             ->guessCrawler($this->getLinkUrlPath($name))
-            ->find($this->getLinkUrlQueryArray($name))
+            ->find($id)
         ;
     }
 }

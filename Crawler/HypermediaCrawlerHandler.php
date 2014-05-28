@@ -28,16 +28,41 @@ class HypermediaCrawlerHandler
         $this->crawlers = array();
     }
 
-    public function setCrawler($crawler, $crawlerServiceId) 
+    /**
+     * Set a crawler
+     * 
+     * @param $crawler HypermediaCrawler
+     * @param string $crawlerServiceId
+     * 
+     * @return $this
+     */
+    public function setCrawler(HypermediaCrawler $crawler, $crawlerServiceId) 
     {
         $this->crawlers[$crawlerServiceId] = $crawler;
+
+        return $this;
     }
 
+    /**
+     * Get a crawler
+     * 
+     * @param string $crawlerServiceId
+     * 
+     * @return HypermediaCrawler
+     */
     public function getCrawler($crawlerServiceId)
     {
         return $this->crawlers[$crawlerServiceId];
     }
 
+    /**
+     * Guess a crawler by path
+     * 
+     * @param string $path
+     * 
+     * @return HypermediaCrawler
+     * @throws NotFoundHttpException
+     */
     public function guessCrawler($path)
     {
         foreach($this->crawlers as $crawler) {

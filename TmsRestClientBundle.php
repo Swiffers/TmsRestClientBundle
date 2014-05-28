@@ -18,6 +18,6 @@ class TmsRestClientBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new CrawlerCompilerPass());
+//        $container->addCompilerPass(new CrawlerCompilerPass());
     }
 }

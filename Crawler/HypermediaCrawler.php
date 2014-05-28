@@ -14,6 +14,8 @@ use Da\ApiClientBundle\Http\Rest\RestApiClientInterface;
 use Da\ApiClientBundle\Http\Response;
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem;
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
+use Tms\Bundle\RestClientBundle\Fatory\HypermediaFactory;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * HypermediaCrawler
@@ -60,6 +62,29 @@ class HypermediaCrawler
             $this->crawlerConfiguration['item']['path']
         );
     }
+    
+    /**
+     * Get crawler embeddeds API paths
+     * 
+     * @param $id
+     * @param $embeddedName
+     * 
+     * @return string
+     */
+    public function getEmbeddedPath($id, $embeddedName)
+    {
+        if(!isset($this->crawlerConfiguration['embeddeds'][$embeddedName])) {
+            throw new NotFoundHttpException(sprintf(
+                "No embedded named '%s' found.", $embeddedName
+            ));
+        }
+
+        return str_replace(
+            "{id}",
+            $id,
+            $this->crawlerConfiguration['embeddeds'][$embeddedName]['path']
+        );
+    }
 
     /**
      * Get crawler collection API path
@@ -78,6 +103,7 @@ class HypermediaCrawler
     /**
      * Check if a path is matching with item OR collection path of the crawler
      * 
+     * @param string $path
      * @return boolean
      */
     public function matchPath($path)
@@ -87,14 +113,27 @@ class HypermediaCrawler
             return true;
         }
 
-        // TODO : check if item path match with regex
-        $explodedPath = explode('/', $path);
-        $id = $explodedPath[count($explodedPath)-1];
+        
+        // TODO : Get ID in path
+        if(!preg_match('/([0-9]+)/', $path, $matches)) {
+            return false;
+        }
+        $id = intval($matches[0]);
 
+        var_dump($itemPath); die;
+        // If it is not a collection, is it an item ?
         $itemPath = sprintf("/app_dev.php/api/rest%s", $this->getItemPath($id));
-
         if($path == $itemPath) {
             return true;
+        }
+
+        // Is it an embedded ?
+        foreach($this->crawlerConfiguration['embeddeds'] as $embeddedName => $embedded)
+        {
+            $embeddedPath = sprintf("/app_dev.php/api/rest%s", $this->getEmbeddedPath($id, $embeddedName));
+            if($path == $embeddedPath) {
+                return true;
+            }
         }
 
         return false;
@@ -103,15 +142,17 @@ class HypermediaCrawler
     /**
      * Find an HypermediaItem
      * 
-     * @param array $id
+     * @param integer $id
      * @return HypermediaItem
      */
     public function find($id)
     {
-        return new HypermediaItem($this->crawlerHandler, $this
-            ->apiClient
-            ->get($this->getItemPath($id))
-            ->getContent(true)
+        return HypermediaFactory::build(
+            $this->crawlerHandler,
+            $this
+                ->apiClient
+                ->get($this->getItemPath($id))
+                ->getContent(true)
         );
     }
 
@@ -123,10 +164,12 @@ class HypermediaCrawler
      */
     public function findAll(array $params = array())
     {
-        return new HypermediaCollection($this->crawlerHandler, $this
-            ->apiClient
-            ->get($this->getCollectionPath(), $params)
-            ->getContent(true)
+        return HypermediaFactory::build(
+            $this->crawlerHandler,
+            $this
+                ->apiClient
+                ->get($this->getCollectionPath(), $params)
+                ->getContent(true)
        );
     }
 }

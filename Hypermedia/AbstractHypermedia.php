@@ -19,19 +19,81 @@ use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler;
 abstract class AbstractHypermedia
 {
     protected $crawlerHandler;
-    protected $raw;
+    protected $metadata;
+    protected $data;
+    protected $links;
 
     /**
      * Constructor
      * 
+     * @param HypermediaCrawlerHandler $crawlerHandler
      * @param array $raw
      */
     public function __construct(HypermediaCrawlerHandler $crawlerHandler, array $raw)
     {
         $this->crawlerHandler = $crawlerHandler;
-        $this->raw = $raw;
+
+        try {
+            $this->normalize($raw);
+        } catch(\Exception $e) {
+            var_dump($e->getMessage());
+        }
     }
 
+    /**
+     * Normalize array to Hypermedia object
+     * 
+     * @param array $raw
+     */
+    public function normalize(array $raw)
+    {
+        $this->setMetadata($raw);
+        $this->setData($raw);
+        $this->setLinks($raw);
+    }
+
+    /**
+     * Set metadata
+     * 
+     * @param array $raw
+     */
+    public function setMetadata(array $raw)
+    {
+        if(!isset($raw['metadata'])) {
+            throw new HttpNotFoundException("No 'metadata' section found in hypermedia raw.");
+        }
+    
+        $this->metadata = $raw['metadata'];
+    }
+
+    /**
+     * Set data
+     * 
+     * @param array $raw
+     */
+    public function setData(array $raw)
+    {
+        if(!isset($raw['data'])) {
+            throw new HttpNotFoundException("No 'data' section found in hypermedia raw.");
+        }
+    
+        $this->data = $raw['data'];
+    }
+
+    /**
+     * Set links
+     * 
+     * @param array $raw
+     */
+    public function setLinks(array $raw)
+    {
+        if(!isset($raw['links'])) {
+            throw new HttpNotFoundException("No 'links' section found in hypermedia raw.");
+        }
+    
+        $this->links = $raw['links'];
+    }
+    
     /**
      * Get a specific metadata
      * 
@@ -41,7 +103,7 @@ abstract class AbstractHypermedia
     public function getMetadata($name)
     {
         if($this->hasMetadata($name)) {
-            return $this->raw['metadata'][$name];
+            return $this->metadata[$name];
         }
 
         throw new NotFoundHttpException(sprintf("No '%s' metadata found.", $name));
@@ -55,7 +117,7 @@ abstract class AbstractHypermedia
      */
     public function hasMetadata($name)
     {
-        return isset($this->raw['metadata'][$name]);
+        return isset($this->metadata[$name]);
     }
 
     /**
@@ -65,7 +127,7 @@ abstract class AbstractHypermedia
      */
     public function getAllMetadata()
     {
-        return $this->raw['metadata'];
+        return $this->metadata;
     }
 
     /**
@@ -75,7 +137,7 @@ abstract class AbstractHypermedia
      */
     public function getData()
     {
-        return $this->raw['data'];
+        return $this->data;
     }
 
     /**
@@ -85,7 +147,7 @@ abstract class AbstractHypermedia
      */
     public function getAllLinks()
     {
-        return $this->raw['links'];
+        return $this->links;
     }
 
     /**
@@ -97,7 +159,7 @@ abstract class AbstractHypermedia
     public function getLink($name)
     {
         if($this->hasLink($name)) {
-            return $this->raw['links'][$name];
+            return $this->links[$name];
         }
 
         throw new NotFoundHttpException(sprintf("No '%s' link found.", $name));
@@ -111,7 +173,7 @@ abstract class AbstractHypermedia
      */
     public function hasLink($name)
     {
-        return isset($this->raw['links'][$name]);
+        return isset($this->links[$name]);
     }
 
     /**

@@ -87,10 +87,18 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
      */
     public function followLink($name)
     {
+        if($this->getLinkType($name) == 'collection') {
+            return $this
+                ->crawlerHandler
+                ->guessCrawler($this->getLinkUrlPath($name))
+                ->findAll($this->getLinkUrlQueryArray($name))
+            ;
+        }
+
         return $this
             ->crawlerHandler
             ->guessCrawler($this->getLinkUrlPath($name))
-            ->findAll($this->getLinkUrlQueryArray($name))
+            ->find($this->getLinkUrlQueryArray($name))
         ;
     }
 }

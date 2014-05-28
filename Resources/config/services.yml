@@ -1,6 +1,7 @@
 parameters:
     tms_rest_client.crawler.handler.class: Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler
     tms_rest_client.crawler.class: Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawler
+    tms_rest_client.router.class: Tms\Bundle\RestClientBundle\Router\HypermediaRouter
 
 services:
     tms_rest_client.crawler.handler:
@@ -10,3 +11,7 @@ services:
         class: %tms_rest_client.crawler.class%
         arguments: [null, null, null]
         abstract: true
+    
+    tms_rest_client.router:
+        class: %tms_rest_client.router.class%
+        arguments: [@router]
