@@ -19,7 +19,9 @@ use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
 class HypermediaCollectionIteratorTest extends \PHPUnit_Framework_TestCase
 {
     private $raw = array(
-        'data' => array('a', 'b', 'c', 'd', 'e')
+        'metadata'  => array(),
+        'data' => array('a', 'b', 'c', 'd', 'e'),
+        'links' => array()
     );
 
     public function testCurrent()

@@ -9,9 +9,8 @@ services:
 
     tms_rest_client.crawler:
         class: %tms_rest_client.crawler.class%
-        arguments: [null, null, null]
-        abstract: true
-    
+        arguments: [@da_api_client.api.hypermedia.crawler]
+
     tms_rest_client.router:
         class: %tms_rest_client.router.class%
         arguments: [@router]

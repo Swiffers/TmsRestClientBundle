@@ -10,6 +10,8 @@
 
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 /**
  * HypermediaItem
  */
@@ -21,7 +23,7 @@ class HypermediaItem extends AbstractHypermedia
      */
     public function getEmbeddedLinks()
     {
-        return $this->raw['links']['embeddeds'];
+        return $this->links['embeddeds'];
     }
 
     /**
@@ -34,10 +36,10 @@ class HypermediaItem extends AbstractHypermedia
     public function getEmbeddedLink($name)
     {
         if($this->hasEmbedded($name)) {
-            return $this->raw['links']['embeddeds'][$name];
+            return $this->links['embeddeds'][$name];
         }
 
-        throw new HttpNotFoundException(sprintf("No '%s' embedded found.", $name));
+        throw new NotFoundHttpException(sprintf("No '%s' embedded found.", $name));
     }
 
     /**
@@ -88,45 +90,18 @@ class HypermediaItem extends AbstractHypermedia
      */
     public function hasEmbedded($name)
     {
-        return isset($this->raw['links']['embeddeds'][$name]);
+        return isset($this->links['embeddeds'][$name]);
     }
 
     /**
      * Follow an embedded link to retrieve new hypermedia object
      * 
-     * @param string $currentName
-     * @param string $embeddedName
+     * @param  $embeddedName
      * @return HypermediaCollection
      * 
      */
-    public function followEmbedded($currentName, $embeddedName)
+    public function followEmbedded($embeddedName)
     {
-        // TODO : Get ID in path
-        $explodedPath = explode('/', $this->getEmbeddedUrlPath($embeddedName));
-        $id = $explodedPath[count($explodedPath)-1];
-
-        return $this
-            ->crawlerHandler
-            ->guessCrawler($this->getEmbeddedUrlPath($embeddedName))
-            ->findAll(array($currentName => $id))
-        ;
-    }
-
-    /**
-     * Follow a link to retrieve new hypermedia object
-     * 
-     * @param string $name
-     * @return HypermediaItem
-     */
-    public function followLink($name)
-    {
-        $explodedPath = explode('/', $this->getLinkUrlPath($name));
-        $id = $explodedPath[count($explodedPath)-1];
-
-        return $this
-            ->crawlerHandler
-            ->guessCrawler($this->getLinkUrlPath($name))
-            ->find($id)
-        ;
+        return $this->followUrl($this->getEmbeddedUrl($embeddedName));
     }
 }

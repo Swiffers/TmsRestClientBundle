@@ -11,14 +11,15 @@
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler;
+use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawler;
 
 /**
  * AbstractHypermedia
  */
 abstract class AbstractHypermedia
 {
-    protected $crawlerHandler;
+    protected $crawler;
+
     protected $metadata;
     protected $data;
     protected $links;
@@ -26,18 +27,24 @@ abstract class AbstractHypermedia
     /**
      * Constructor
      * 
-     * @param HypermediaCrawlerHandler $crawlerHandler
      * @param array $raw
      */
-    public function __construct(HypermediaCrawlerHandler $crawlerHandler, array $raw)
+    public function __construct(array $raw)
     {
-        $this->crawlerHandler = $crawlerHandler;
+        $this->normalize($raw);
+    }
 
-        try {
-            $this->normalize($raw);
-        } catch(\Exception $e) {
-            var_dump($e->getMessage());
-        }
+    /**
+     * Set the crawler
+     * 
+     * @param HypermediaCrawler $crawler
+     * return $this
+     */
+    public function setCrawler(HypermediaCrawler $crawler)
+    {
+         $this->crawler = $crawler;
+
+         return $this;
     }
 
     /**
@@ -60,7 +67,7 @@ abstract class AbstractHypermedia
     public function setMetadata(array $raw)
     {
         if(!isset($raw['metadata'])) {
-            throw new HttpNotFoundException("No 'metadata' section found in hypermedia raw.");
+            throw new NotFoundHttpException("No 'metadata' section found in hypermedia raw.");
         }
     
         $this->metadata = $raw['metadata'];
@@ -74,7 +81,7 @@ abstract class AbstractHypermedia
     public function setData(array $raw)
     {
         if(!isset($raw['data'])) {
-            throw new HttpNotFoundException("No 'data' section found in hypermedia raw.");
+            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
         }
     
         $this->data = $raw['data'];
@@ -88,7 +95,7 @@ abstract class AbstractHypermedia
     public function setLinks(array $raw)
     {
         if(!isset($raw['links'])) {
-            throw new HttpNotFoundException("No 'links' section found in hypermedia raw.");
+            throw new NotFoundHttpException("No 'links' section found in hypermedia raw.");
         }
     
         $this->links = $raw['links'];
@@ -100,8 +107,12 @@ abstract class AbstractHypermedia
      * @param string $name
      * @return mixed $metadata
      */
-    public function getMetadata($name)
+    public function getMetadata($name = null)
     {
+        if(is_null($name)) {
+            return $this->getAllMetadata();
+        }
+
         if($this->hasMetadata($name)) {
             return $this->metadata[$name];
         }
@@ -214,12 +225,30 @@ abstract class AbstractHypermedia
         return parse_url($this->getLinkUrl($name), PHP_URL_PATH);
     }
     
+    /**
+     * Follow a link URL to retrieve new hypermedia object
+     * 
+     * @param string  $absoluteUrl
+     * @param array  $params
+     * 
+     * @return mixed HypermediaCollection OR HypermediaItem
+     */
+    public function followUrl($absoluteUrl, array $params = array())
+    {
+        return $this
+            ->crawler
+            ->crawle($absoluteUrl, $params, 1) // Absolute URL is given to the crawler
+        ;
+    }
 
     /**
      * Follow a link name to retrieve new hypermedia object
      * 
-     * @param string  $name
-     * @return mixed HypermediaCollection OR HypermediaItem
+     * @param string $name
+     * @return HypermediaItem or HypermediaCollection
      */
-    abstract public function followLink($name);
+    public function followLink($name)
+    {
+        return $this->followUrl($this->getLinkUrl($name));
+    }
 }

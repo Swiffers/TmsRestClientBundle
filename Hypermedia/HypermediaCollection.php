@@ -28,6 +28,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     /**
      * Follow the nextPage link
      * 
+     * @return HypermediaCollection
      */
     public function nextPage()
     {
@@ -37,6 +38,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     /**
      * Follow the previousPage link
      * 
+     * @return HypermediaCollection
      */
     public function previousPage()
     {
@@ -46,6 +48,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     /**
      * Follow the lastPage link
      * 
+     * @return HypermediaCollection
      */
     public function lastPage()
     {
@@ -55,6 +58,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     /**
      * Follow the firstPage link
      * 
+     * @return HypermediaCollection
      */
     public function firstPage()
     {
@@ -65,40 +69,12 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
      * Follow a specific page number link
      * 
      * @param integer $page
-     * 
+     * @return HypermediaCollection
      */
     public function page($page)
     {
-        return $this
-            ->crawlerHandler
-            ->guessCrawler($this->getLinkUrlPath('self'))
-            ->findAll(array_merge(
-                $this->getLinkUrlQueryArray('self'),
-                array('page' => $page)
-            ))
-        ;
-    }
-
-    /**
-     * Follow an url to retrieve new hypermedia object
-     * 
-     * @param string  $name
-     * @return HypermediaCollection
-     */
-    public function followLink($name)
-    {
-        if($this->getLinkType($name) == 'collection') {
-            return $this
-                ->crawlerHandler
-                ->guessCrawler($this->getLinkUrlPath($name))
-                ->findAll($this->getLinkUrlQueryArray($name))
-            ;
-        }
-
-        return $this
-            ->crawlerHandler
-            ->guessCrawler($this->getLinkUrlPath($name))
-            ->find($this->getLinkUrlQueryArray($name))
-        ;
+        return $this->followUrl($this->getLinkUrl('self'), array(
+            'page' => $page
+        ));
     }
 }

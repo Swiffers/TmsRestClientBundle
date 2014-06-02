@@ -14,7 +14,7 @@ use Da\ApiClientBundle\Http\Rest\RestApiClientInterface;
 use Da\ApiClientBundle\Http\Response;
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem;
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
-use Tms\Bundle\RestClientBundle\Fatory\HypermediaFactory;
+use Tms\Bundle\RestClientBundle\Factory\HypermediaFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -23,25 +23,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class HypermediaCrawler
 {
     protected $apiClient;
-    protected $crawlerName;
-    protected $crawlerConfiguration;
-    protected $crawlerHandler;
 
     /**
      * Constructor
      */
-    public function __construct(RestApiClientInterface $apiClient, $crawlerName, array $crawlerConfiguration = null)
+    public function __construct(RestApiClientInterface $apiClient)
     {
         $this->apiClient = $apiClient;
-        $this->crawlerName = $crawlerName;
-        $this->crawlerConfiguration = $crawlerConfiguration;
-    }
-    
-    public function setCrawlerHandler(HypermediaCrawlerHandler $crawlerHandler)
-    {
-        $this->crawlerHandler = $crawlerHandler;
-
-        return $this;
     }
 
     /**
@@ -142,34 +130,52 @@ class HypermediaCrawler
     /**
      * Find an HypermediaItem
      * 
-     * @param integer $id
+     * @param string $name
+     * @param string $key
+     * 
      * @return HypermediaItem
      */
-    public function find($id)
+    public function find($name, $key)
     {
-        return HypermediaFactory::build(
-            $this->crawlerHandler,
-            $this
-                ->apiClient
-                ->get($this->getItemPath($id))
-                ->getContent(true)
-        );
+        $path = sprintf("%s/%s", $name, $key);
+
+        return $this->crawle($path);
     }
 
     /**
      * Find an HypermediaCollection
      * 
+     * param string $name
      * @param array $params
+     * 
      * @return HypermediaCollection
      */
-    public function findAll(array $params = array())
+    public function findAll($name, array $params = array())
     {
-        return HypermediaFactory::build(
-            $this->crawlerHandler,
+        $path = sprintf("%s", $name);
+
+        return $this->crawle($path, $params);
+    }
+
+    /**
+     * Crawle an URL (absolute or relative)
+     * 
+     * @param string  $path
+     * @param array   $params
+     * @param boolean $absolutePath
+     * 
+     * @return HypermediaCollection | HypermediaItem
+     */
+    public function crawle($path, array $params = array(), $absolutePath = false)
+    {
+        $hypermedia = HypermediaFactory::build(
             $this
                 ->apiClient
-                ->get($this->getCollectionPath(), $params)
+                ->get($path, $params, array(), false, $absolutePath)
                 ->getContent(true)
-       );
+        );
+        $hypermedia->setCrawler($this);
+        
+        return $hypermedia;
     }
 }

@@ -8,11 +8,9 @@
  *
  */
 
-namespace Tms\Bundle\RestClientBundle\Fatory;
+namespace Tms\Bundle\RestClientBundle\Factory;
 
-use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem;
-use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
-use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler;
+use Tms\Bundle\RestBundle\Formatter\AbstractHypermediaFormatter;
 
 /**
  * HypermediaFactory
@@ -20,7 +18,7 @@ use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler;
 abstract class HypermediaFactory
 {
     /**
-     * Build an hypermedia object according to given raw
+     * Build an hypermedia object according to the given raw
      * 
      * @param array $raw
      * 
@@ -28,17 +26,36 @@ abstract class HypermediaFactory
      */
     static public function build(array $raw)
     {
-        if(isset($raw['metadata']) && isset($raw['metadata']['serializerContextGroup'])) {
-            $hypermediaType = ucfirst($raw['metadata']['serializerContextGroup']);
-            $hypermediaClass = sprintf("Hypermedia%s", $hypermediaType);
-    
-            if(class_exists($hypermediaClass)) {
-                return new $hypermediaClass($raw);
-            }
+        if(
+            isset($raw['metadata']) &&
+            isset($raw['metadata'][AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_NAME])
+        ) {
+            $hypermediaClass = self::generateHypermediaClass(
+                $raw['metadata'][AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_NAME]
+            );
+            $reflectedClass = new \ReflectionClass($hypermediaClass);
+
+            return new $hypermediaClass($raw);
         }
 
         throw new \Exception(sprintf(
-            "Unable to build hypermedia object : no serializer context group defined."
+            "Unable to build hypermedia object : no %s defined in hypermedia metadata.",
+            AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_NAME
         ));
+    }
+
+    /**
+     * Generate the hypermedia class according to serializer context param
+     * 
+     * @param string $serializerContext
+     * @return string hypermedia class name
+     */
+    static public function generateHypermediaClass($serializerContext)
+    {
+        $hypermediaType = explode('.', $serializerContext);
+        $hypermediaType = ucfirst(array_pop($hypermediaType));
+        $hypermediaClass = sprintf("Hypermedia%s", $hypermediaType);
+
+        return sprintf('Tms\Bundle\RestClientBundle\Hypermedia\%s', $hypermediaClass);
     }
 }
