@@ -11,6 +11,7 @@
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Tms\Bundle\RestClientBundle\Iterator\HypermediaCollectionIterator;
+use Tms\Bundle\RestClientBundle\Factory\HypermediaFactory;
 
 /**
  * HypermediaCollection
@@ -23,6 +24,24 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     public function getIterator()
     {
         return new HypermediaCollectionIterator($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setData(array $raw)
+    {
+        if(!isset($raw['data'])) {
+            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
+        }
+
+        // Build a collection of HypermediaItem
+        foreach($raw['data'] as $item)
+        {
+            $this->data[] = HypermediaFactory::build($item);
+        }
+
+        return $this;
     }
 
     /**

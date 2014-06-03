@@ -17,13 +17,43 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class HypermediaItem extends AbstractHypermedia
 {
+    protected $embeddedLinks = array();
+
+    /**
+     * Constructor
+     * 
+     * @param array $raw
+     */
+    public function __construct(array $raw)
+    {
+        parent::__construct($raw);
+
+        if(isset($this->links['embeddeds'])) {
+            $this->embeddedLinks = $this->links['embeddeds'];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setData(array $raw)
+    {
+        if(!isset($raw['data'])) {
+            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
+        }
+    
+        $this->data = $raw['data'];
+
+        return $this;
+    }
+
     /**
      * Get embedded links
      * 
      */
     public function getEmbeddedLinks()
     {
-        return $this->links['embeddeds'];
+        return $this->embeddedLinks;
     }
 
     /**
@@ -36,7 +66,7 @@ class HypermediaItem extends AbstractHypermedia
     public function getEmbeddedLink($name)
     {
         if($this->hasEmbedded($name)) {
-            return $this->links['embeddeds'][$name];
+            return $this->embeddedLinks[$name];
         }
 
         throw new NotFoundHttpException(sprintf("No '%s' embedded found.", $name));
@@ -90,7 +120,7 @@ class HypermediaItem extends AbstractHypermedia
      */
     public function hasEmbedded($name)
     {
-        return isset($this->links['embeddeds'][$name]);
+        return isset($this->embeddedLinks[$name]);
     }
 
     /**

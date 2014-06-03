@@ -23,19 +23,24 @@ class HypermediaFactoryTest extends \PHPUnit_Framework_TestCase
     private $rawCollection = array(
         'metadata'  => array(
             'serializerContextGroup' => AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_COLLECTION,
-            'page'       => 1,
-            'pageCount'  => 10,
-            'totalCount' => 20,
-            'limit'      => 10,
-            'offset'     => 0
         ),
-        'data' => array('a', 'b', 'c', 'd', 'e'),
-        'links' => array(
-            'self' => array(
-                'rel'  => 'self',
-                'href' => 'http://www.google.fr'
+        'data' => array(
+            array(
+                'metadata'  => array(
+                    'serializerContextGroup' => AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_ITEM,
+                ),
+                'data' => 'a',
+                'links' => array()
+            ),
+            array(
+                'metadata'  => array(
+                    'serializerContextGroup' => AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_ITEM,
+                ),
+                'data' => 'b',
+                'links' => array()
             )
-        )
+        ),
+        'links' => array()
     );
     
     private $rawItem = array(
@@ -43,12 +48,7 @@ class HypermediaFactoryTest extends \PHPUnit_Framework_TestCase
             'serializerContextGroup' => AbstractHypermediaFormatter::SERIALIZER_CONTEXT_GROUP_ITEM
         ),
         'data' => array('a', 'b', 'c', 'd', 'e'),
-        'links' => array(
-            'self' => array(
-                'rel'  => 'self',
-                'href' => 'http://www.google.fr'
-            )
-        )
+        'links' => array()
     );
 
     private $rawErrorWithoutLinks = array(
@@ -72,8 +72,14 @@ class HypermediaFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(get_class($hypermediaCollection), 'Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection');
 
         $this->assertEquals($this->rawCollection['metadata'], $hypermediaCollection->getAllMetadata());
-        $this->assertEquals($this->rawCollection['data'], $hypermediaCollection->getData());
         $this->assertEquals($this->rawCollection['links'], $hypermediaCollection->getAllLinks());
+
+        $i = 0;
+        foreach($hypermediaCollection as $item) {
+            $this->assertEquals($this->rawCollection['data'][$i]['data'], $item->getData());
+            $this->assertEquals(get_class($item), 'Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem');
+            $i++;
+        }
     }
 
     public function testHypermediaItemFactory()

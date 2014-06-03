@@ -168,14 +168,19 @@ class HypermediaCrawler
      */
     public function crawle($path, array $params = array(), $absolutePath = false)
     {
+        /* Build an HypermediaCollection or HypermediaItem
+         * according to the metadata type of the API raw
+         */
         $hypermedia = HypermediaFactory::build(
             $this
                 ->apiClient
                 ->get($path, $params, array(), false, $absolutePath)
                 ->getContent(true)
         );
+
+        // Useful to navigate in hypermedia by following links
         $hypermedia->setCrawler($this);
-        
+
         return $hypermedia;
     }
 }

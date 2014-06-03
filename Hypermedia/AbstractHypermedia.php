@@ -38,7 +38,7 @@ abstract class AbstractHypermedia
      * Set the crawler
      * 
      * @param HypermediaCrawler $crawler
-     * return $this
+     * @return $this
      */
     public function setCrawler(HypermediaCrawler $crawler)
     {
@@ -54,15 +54,18 @@ abstract class AbstractHypermedia
      */
     public function normalize(array $raw)
     {
-        $this->setMetadata($raw);
-        $this->setData($raw);
-        $this->setLinks($raw);
+        $this
+            ->setMetadata($raw)
+            ->setData($raw)
+            ->setLinks($raw)
+        ;
     }
 
     /**
      * Set metadata
      * 
      * @param array $raw
+     * @return $this;
      */
     public function setMetadata(array $raw)
     {
@@ -71,26 +74,16 @@ abstract class AbstractHypermedia
         }
     
         $this->metadata = $raw['metadata'];
+
+        return $this;
     }
 
-    /**
-     * Set data
-     * 
-     * @param array $raw
-     */
-    public function setData(array $raw)
-    {
-        if(!isset($raw['data'])) {
-            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
-        }
-    
-        $this->data = $raw['data'];
-    }
 
     /**
      * Set links
      * 
      * @param array $raw
+     * @return $this;
      */
     public function setLinks(array $raw)
     {
@@ -99,6 +92,8 @@ abstract class AbstractHypermedia
         }
     
         $this->links = $raw['links'];
+
+        return $this;
     }
     
     /**
@@ -251,4 +246,12 @@ abstract class AbstractHypermedia
     {
         return $this->followUrl($this->getLinkUrl($name));
     }
+
+    /**
+     * Set data
+     * 
+     * @param array $raw
+     * @return $this;
+     */
+    abstract public function setData(array $raw);
 }
