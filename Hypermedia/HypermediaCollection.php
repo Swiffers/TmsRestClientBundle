@@ -63,6 +63,26 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     {
         return $this->followLink('previousPage');
     }
+    
+    /**
+     * Check if the collection has next page
+     * 
+     * @return boolean
+     */
+    public function hasNextPage()
+    {
+        return $this->getLinkUrl('nextPage') != '';
+    }
+
+    /**
+     * Check if the collection has previous page
+     * 
+     * @return boolean
+     */
+    public function hasPreviousPage()
+    {
+        return $this->getLinkUrl('previousPage') != '';
+    }
 
     /**
      * Follow the lastPage link
@@ -95,5 +115,15 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
         return $this->followUrl($this->getLinkUrl('self'), array(
             'page' => $page
         ));
+    }
+
+    /**
+     * Count collection items
+     * 
+     * @return integer
+     */
+    public function countItems()
+    {
+        return count($this->data);
     }
 }
