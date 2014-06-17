@@ -12,6 +12,7 @@ namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Tms\Bundle\RestClientBundle\Iterator\HypermediaCollectionIterator;
 use Tms\Bundle\RestClientBundle\Factory\HypermediaFactory;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * HypermediaCollection
@@ -42,6 +43,23 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
         }
 
         return $this;
+    }
+
+    /**
+     * Get array data
+     * 
+     * @return array
+     */
+    public function getArrayData()
+    {
+        $data = array();
+
+        foreach($this->getData() as $item)
+        {
+            $data[] = $item->getData();
+        }
+
+        return $this->data;
     }
 
     /**
