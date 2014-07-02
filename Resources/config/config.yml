@@ -1,3 +1,4 @@
 da_api_client:
     api:
-        hypermedia_crawler: ~
+        hypermedia_crawler:
+            endpoint_root: ~
