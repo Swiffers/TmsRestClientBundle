@@ -26,7 +26,7 @@ abstract class AbstractHypermedia
 
     /**
      * Constructor
-     * 
+     *
      * @param array $raw
      */
     public function __construct(array $raw)
@@ -36,7 +36,7 @@ abstract class AbstractHypermedia
 
     /**
      * Set the crawler
-     * 
+     *
      * @param HypermediaCrawler $crawler
      * return $this
      */
@@ -49,7 +49,7 @@ abstract class AbstractHypermedia
 
     /**
      * Normalize array to Hypermedia object
-     * 
+     *
      * @param array $raw
      */
     public function normalize(array $raw)
@@ -61,7 +61,7 @@ abstract class AbstractHypermedia
 
     /**
      * Set metadata
-     * 
+     *
      * @param array $raw
      */
     public function setMetadata(array $raw)
@@ -69,13 +69,13 @@ abstract class AbstractHypermedia
         if(!isset($raw['metadata'])) {
             throw new NotFoundHttpException("No 'metadata' section found in hypermedia raw.");
         }
-    
+
         $this->metadata = $raw['metadata'];
     }
 
     /**
      * Set data
-     * 
+     *
      * @param array $raw
      */
     public function setData(array $raw)
@@ -83,13 +83,13 @@ abstract class AbstractHypermedia
         if(!isset($raw['data'])) {
             throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
         }
-    
+
         $this->data = $raw['data'];
     }
 
     /**
      * Set links
-     * 
+     *
      * @param array $raw
      */
     public function setLinks(array $raw)
@@ -97,13 +97,13 @@ abstract class AbstractHypermedia
         if(!isset($raw['links'])) {
             throw new NotFoundHttpException("No 'links' section found in hypermedia raw.");
         }
-    
+
         $this->links = $raw['links'];
     }
-    
+
     /**
      * Get a specific metadata
-     * 
+     *
      * @param string $name
      * @return mixed $metadata
      */
@@ -122,7 +122,7 @@ abstract class AbstractHypermedia
 
     /**
      * Check if a specific metadata exists
-     * 
+     *
      * @param string $name
      * @return boolean
      */
@@ -133,7 +133,7 @@ abstract class AbstractHypermedia
 
     /**
      * Get all metadata
-     * 
+     *
      * @return array
      */
     public function getAllMetadata()
@@ -143,7 +143,7 @@ abstract class AbstractHypermedia
 
     /**
      * Get data
-     * 
+     *
      * @return array
      */
     public function getData()
@@ -153,7 +153,7 @@ abstract class AbstractHypermedia
 
     /**
      * Get links
-     * 
+     *
      * @return array
      */
     public function getAllLinks()
@@ -163,7 +163,7 @@ abstract class AbstractHypermedia
 
     /**
      * Get a specific link
-     * 
+     *
      * @param string $name
      * @return array
      */
@@ -178,7 +178,7 @@ abstract class AbstractHypermedia
 
     /**
      * Check if a specific link exists
-     * 
+     *
      * @param string $name
      * @return boolean
      */
@@ -189,20 +189,20 @@ abstract class AbstractHypermedia
 
     /**
      * Get a link URL
-     * 
+     *
      * @param string $name
      * @return string URL
      */
     public function getLinkUrl($name)
     {
         $link = $this->getLink($name);
-        
+
         return $link['href'];
     }
 
     /**
      * Get a link query array
-     * 
+     *
      * @param string $name
      * @return array
      */
@@ -216,7 +216,7 @@ abstract class AbstractHypermedia
 
     /**
      * Get a link path
-     * 
+     *
      * @param string $name
      * @return string
      */
@@ -224,26 +224,23 @@ abstract class AbstractHypermedia
     {
         return parse_url($this->getLinkUrl($name), PHP_URL_PATH);
     }
-    
+
     /**
      * Follow a link URL to retrieve new hypermedia object
-     * 
+     *
      * @param string  $absoluteUrl
      * @param array  $params
-     * 
+     *
      * @return mixed HypermediaCollection OR HypermediaItem
      */
     public function followUrl($absoluteUrl, array $params = array())
     {
-        return $this
-            ->crawler
-            ->crawle($absoluteUrl, $params, 1) // Absolute URL is given to the crawler
-        ;
+        return $this->crawler->findPath($absoluteUrl, $params);
     }
 
     /**
      * Follow a link name to retrieve new hypermedia object
-     * 
+     *
      * @param string $name
      * @return HypermediaItem or HypermediaCollection
      */

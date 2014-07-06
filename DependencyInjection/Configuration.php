@@ -28,43 +28,6 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('tms_rest_client');
 
-        /*
-        $rootNode
-            ->children()
-                ->arrayNode('crawlers')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->children()
-                        ->arrayNode('resources')
-                        ->useAttributeAsKey('name')
-                        ->prototype('array')
-                            ->children()
-                                ->arrayNode('collection')
-                                    ->children()
-                                        ->scalarNode('path')->isRequired()->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('item')
-                                    ->children()
-                                        ->scalarNode('path')->isRequired()->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('embeddeds')
-                                    ->useAttributeAsKey('name')
-                                    ->prototype('array')
-                                        ->children()
-                                            ->scalarNode('path')->isRequired()->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-         */
-
         return $treeBuilder;
     }
 }

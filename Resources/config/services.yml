@@ -1,15 +1,17 @@
 parameters:
-    tms_rest_client.crawler.handler.class: Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawlerHandler
-    tms_rest_client.crawler.class: Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawler
+    tms_rest_client.crawler.class: Tms\Bundle\RestClientBundle\Hypermedia\Crawling\Crawler
+    tms_rest_client.crawling_path.class: Tms\Bundle\RestClientBundle\Hypermedia\Crawling\CrawlingPath
     tms_rest_client.router.class: Tms\Bundle\RestClientBundle\Router\HypermediaRouter
 
 services:
-    tms_rest_client.crawler.handler:
-        class: %tms_rest_client.crawler.handler.class%
-
     tms_rest_client.crawler:
         class: %tms_rest_client.crawler.class%
-        arguments: [@da_api_client.api.hypermedia.crawler]
+
+    tms_rest_client.crawling_path:
+        class: %tms_rest_client.crawling_path.class%
+        arguments: [null]
+        abstract: true
+        public: false
 
     tms_rest_client.router:
         class: %tms_rest_client.router.class%

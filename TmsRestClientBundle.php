@@ -1,23 +1,20 @@
 <?php
 
-/**
- *
- * @author:  TESSI Marketing <contact@tessi.fr>
- *
- */
-
 namespace Tms\Bundle\RestClientBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Tms\Bundle\RestClientBundle\DependencyInjection\Compiler\CrawlerCompilerPass;
+use Tms\Bundle\RestClientBundle\DependencyInjection\Compiler\BuildCrawlingPathPass;
 
+/**
+ * @author TESSI Marketing <contact@tessi.fr>
+ */
 class TmsRestClientBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
 
-//        $container->addCompilerPass(new CrawlerCompilerPass());
+        $container->addCompilerPass(new BuildCrawlingPathPass());
     }
 }
