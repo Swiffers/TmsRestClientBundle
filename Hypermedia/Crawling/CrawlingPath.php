@@ -167,6 +167,10 @@ class CrawlingPath implements CrawlingPathInterface
      */
     public function crawl($path, array $params = array(), $absolutePath = false)
     {
+        if (!$absolutePath && $path[0] !== '/') {
+            $path = sprintf('/%s', $path);
+        }
+
         $hypermedia = HypermediaFactory::build(
             $this
                 ->apiClient
@@ -200,6 +204,8 @@ class CrawlingPath implements CrawlingPathInterface
             $endpointRoot = $this->apiClient->getEndpointRoot();
 
             $path = substr($path, strlen($endpointRoot));
+        } else if ($path[0] !== '/') {
+            $path = sprintf('/%s', $path);
         }
 
         $hypermedia = HypermediaFactory::build(
