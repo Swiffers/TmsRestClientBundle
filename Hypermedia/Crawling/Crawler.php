@@ -35,6 +35,16 @@ class Crawler implements CrawlerInterface
     }
 
     /**
+     * Get the crawling path ids.
+     *
+     * @return array The crawling path ids.
+     */
+    public function getCrawlingPathIds()
+    {
+        return array_keys($this->crawlingPaths);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function go($crawlingPathId)

@@ -1,0 +1,12 @@
+{% extends "TmsRestClientBundle:Browser:layout.html.twig" %}
+
+{% block content %}
+    <ul>
+        {% for crawlingPath in crawlingPaths %}
+            <li><a href="{{ path('tms_restclient_browser_go', {crawling_path: crawlingPath})}}">{{ crawlingPath }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block nav %}
+{% endblock %}

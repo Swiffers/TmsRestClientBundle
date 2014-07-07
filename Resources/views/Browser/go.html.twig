@@ -1,0 +1,24 @@
+{% extends "TmsRestClientBundle:Browser:layout.html.twig" %}
+
+{% block content %}
+    <ul>
+        <li>
+            <form action="{{ path('tms_restclient_browser_findone', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
+                <input type="text" name="path" />
+                <input type="submit" value="findOne" />
+            </form>
+        </li>
+        <li>
+            <form action="{{ path('tms_restclient_browser_find', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
+                <input type="text" name="path" />
+                <input type="submit" value="find" />
+            </form>
+        </li>
+        <li>
+            <form action="{{ path('tms_restclient_browser_inquire', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
+                <input type="text" name="path" />
+                <input type="submit" value="inquire" />
+            </form>
+        </li>
+    </ul>
+{% endblock %}
