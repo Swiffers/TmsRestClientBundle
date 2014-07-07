@@ -19,12 +19,11 @@ class BuildCrawlingPathPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('tms_rest_client.crawler')) {
+        if (!$container->hasDefinition('tms_rest_client.hypermedia.crawler')) {
             return;
         }
 
-        $crawlerDefinition = $container->getDefinition('tms_rest_client.crawler');
-        $abstractCrawlingPathDefinition = $container->getDefinition('tms_rest_client.crawling_path');
+        $crawlerDefinition = $container->getDefinition('tms_rest_client.hypermedia.crawler');
 
         $taggedServices = $container->findTaggedServiceIds(
             'da_api_client.api'
@@ -33,16 +32,16 @@ class BuildCrawlingPathPass implements CompilerPassInterface
         foreach ($taggedServices as $apiClientId => $tagAttributes) {
             $id = substr($apiClientId, strlen('da_api_client.api.'));
             $pathId = sprintf(
-                'tms_rest_client.crawling_path.%s',
-                $pathId
+                'tms_rest_client.hypermedia.crawling_path.%s',
+                $id
             );
 
-            $crawlingPathDefinition = new DefinitionDecorator($abstractCrawlingPathDefinition);
-            $crawlingPathDefinition->replaceArgument(0, new Reference($apiClientId))
+            $crawlingPathDefinition = new DefinitionDecorator('tms_rest_client.hypermedia.crawling_path');
+            $crawlingPathDefinition->replaceArgument(0, new Reference($apiClientId));
             $container->setDefinition($pathId, $crawlingPathDefinition);
 
             $crawlerDefinition->addMethodCall(
-                'addCrawlingPath',
+                'setCrawlingPath',
                 array($id, new Reference($pathId))
             );
         }

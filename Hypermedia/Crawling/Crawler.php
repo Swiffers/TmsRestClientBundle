@@ -1,6 +1,6 @@
 <?php
 
-namespace Tms\Bundle\RestClientBundle\Crawler;
+namespace Tms\Bundle\RestClientBundle\Hypermedia\Crawling;
 
 use Da\ApiClientBundle\Http\Rest\RestApiClientInterface;
 use Da\ApiClientBundle\Http\Response;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Thomas Prelot <thomas.prelot@tessi.fr>
  */
-class Crawler
+class Crawler implements CrawlerInterface
 {
     /**
      * The crawling paths.
@@ -26,8 +26,8 @@ class Crawler
     /**
      * Set a crawling path.
      *
-     * @param $id           string                The id of the crawling path.
-     * @param $crawlingPath CrawlingPathInterface The crawling path.
+     * @param string                $id           The id of the crawling path.
+     * @param CrawlingPathInterface $crawlingPath The crawling path.
      */
     public function setCrawlingPath($id, CrawlingPathInterface $crawlingPath)
     {
@@ -35,35 +35,58 @@ class Crawler
     }
 
     /**
-     * Go on a crawling path.
-     *
-     * @param $crawlingPathId string The id of the crawling path.
-     *
-     * @return CrawlingPathInterface The crawling path.
+     * {@inheritdoc}
      */
     public function go($crawlingPathId)
     {
-        if (!isset($this->crawlingPaths[$id])) {
+        if (!isset($this->crawlingPaths[$crawlingPathId])) {
             throw new \LogicException(sprintf(
                 'The crawling path "%s" is not defined.',
-                $id
+                $crawlingPathId
             ));
         }
 
-        return $this->crawlingPaths[$id];
+        return $this->crawlingPaths[$crawlingPathId];
     }
 
     /**
-     * Find a crawling path.
+     * {@inheritdoc}
+     */
+    public function crawl($url, array $params = array())
+    {
+        $crawlingPath = $this->retrieveCrawlingPath($url);
+
+        $crawlingPath->crawl($url, $params, true);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($url, $method, array $params = array())
+    {
+        $crawlingPath = $this->retrieveCrawlingPath($url);
+
+        $crawlingPath->execute($url, $method, $params);
+    }
+
+    /**
+     * Retrieve a crawling path from an URL.
      *
-     * @param $crawlingPathId string The id of the crawling path.
+     * @param string $url The URL.
      *
      * @return CrawlingPathInterface The crawling path.
      */
-    public function findPath($url)
+    protected function retrieveCrawlingPath($url)
     {
         foreach ($this->crawlingPaths as $crawlingPath) {
-            $crawlingPath->;
+            if ($crawlingPath->matchPath($url)) {
+                return $crawlingPath;
+            }
         }
+
+        throw new \LogicException(sprintf(
+            'There is no crawling path for the url "%s".',
+            $url
+        ));
     }
 }

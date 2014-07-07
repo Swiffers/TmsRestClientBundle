@@ -1,6 +1,6 @@
 <?php
 
-namespace Tms\Bundle\RestClientBundle\Crawler;
+namespace Tms\Bundle\RestClientBundle\Hypermedia\Crawling;
 
 use Da\ApiClientBundle\Http\Rest\RestApiClientInterface;
 use Da\ApiClientBundle\Http\Response;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Thomas Prelot <thomas.prelot@tessi.fr>
  */
-class CrawlingPath
+class CrawlingPath implements CrawlingPathInterface
 {
     /**
      * The api client.
@@ -34,11 +34,7 @@ class CrawlingPath
     }
 
     /**
-     * Whether or not a path is matching with this crawling path.
-     *
-     * @param string $path The path to match.
-     *
-     * @return boolean True if the path match, false otherwise.
+     * {@inheritdoc}
      */
     public function matchPath($path)
     {
@@ -48,13 +44,7 @@ class CrawlingPath
     }
 
     /**
-     * Find one.
-     *
-     * @param string  $path The path.
-     * @param string  $slug The slug.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
-     *
-     * @return HypermediaItem The hypermedia.
+     * {@inheritdoc}
      */
     public function findOne($path, $slug, $absolutePath = false)
     {
@@ -75,13 +65,7 @@ class CrawlingPath
     }
 
     /**
-     * Find.
-     *
-     * @param string  $path   The path.
-     * @param array   $params The query parameters.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
-     *
-     * @return HypermediaCollection The hypermedia.
+     * {@inheritdoc}
      */
     public function find($path, array $params = array(), $absolutePath = false)
     {
@@ -100,12 +84,7 @@ class CrawlingPath
     }
 
     /**
-     * Inquire.
-     *
-     * @param string  $path The path.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
-     *
-     * @return HypermediaItem The hypermedia.
+     * {@inheritdoc}
      */
     public function inquire($path, $absolutePath = false)
     {
@@ -184,20 +163,49 @@ class CrawlingPath
     }
 
     /**
-     * Crawl an URL (absolute or relative)
-     *
-     * @param string  $path         The path.
-     * @param array   $params       The query parameters.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
-     *
-     * @return HypermediaCollection | HypermediaItem
+     * {@inheritdoc}
      */
-    protected function crawl($path, array $params = array(), $absolutePath = false)
+    public function crawl($path, array $params = array(), $absolutePath = false)
     {
         $hypermedia = HypermediaFactory::build(
             $this
                 ->apiClient
                 ->get($path, $params, array(), false, $absolutePath)
+                ->getContent(true)
+        );
+
+        $hypermedia->setCrawler($this);
+
+        return $hypermedia;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($path, $method, array $params = array())
+    {
+        $class = new \ReflectionClass($this->apiClient);
+
+        $method = strtolower($method);
+
+        if (!$class->hasMethod($method)) {
+            throw new \LogicException(sprintf(
+                'The HTTP method "%s" does not exist or has not been implemented.',
+                $method
+            ));
+        }
+
+        // Handle absolute URL path.
+        if ($match = $this->matchPath($path)) {
+            $endpointRoot = $this->apiClient->getEndpointRoot();
+
+            $path = substr($path, strlen($endpointRoot));
+        }
+
+        $hypermedia = HypermediaFactory::build(
+            $this
+                ->apiClient
+                ->$method($path, $params)
                 ->getContent(true)
         );
 
