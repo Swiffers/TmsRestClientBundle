@@ -1,19 +1,14 @@
 <?php
 
-/**
- *
- * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
- * @author:  Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
- * @license: GPL
- *
- */
-
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * HypermediaItem
+ * HypermediaItem.
+ *
+ * @author Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
+ * @author Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
  */
 class HypermediaItem extends AbstractHypermedia
 {

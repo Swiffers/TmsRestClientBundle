@@ -1,19 +1,14 @@
 <?php
 
-/**
- *
- * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
- * @author:  Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
- * @license: GPL
- *
- */
-
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Tms\Bundle\RestClientBundle\Iterator\HypermediaCollectionIterator;
 
 /**
- * HypermediaCollection
+ * HypermediaCollection.
+ *
+ * @author Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
+ * @author Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
  */
 class HypermediaCollection extends AbstractHypermedia implements \IteratorAggregate
 {

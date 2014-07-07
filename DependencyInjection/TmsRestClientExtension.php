@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
+use Tms\Bundle\RestClientBundle\Hypermedia\Constants;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -32,5 +33,9 @@ class TmsRestClientExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('hypermedia.yml');
+
+        $container->setParameter('tms_rest_client.hypermedia.hydrator.item', Constants::SERIALIZER_CONTEXT_GROUP_ITEM);
+        $container->setParameter('tms_rest_client.hypermedia.hydrator.collection', Constants::SERIALIZER_CONTEXT_GROUP_COLLECTION);
     }
 }

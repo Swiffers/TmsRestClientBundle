@@ -1,20 +1,15 @@
 <?php
 
-/**
- *
- * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
- * @author:  Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
- * @license: GPL
- *
- */
-
 namespace Tms\Bundle\RestClientBundle\Hypermedia;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawler;
+use Tms\Bundle\RestClientBundle\Hypermedia\Crawling\CrawlerInterface;
 
 /**
- * AbstractHypermedia
+ * AbstractHypermedia.
+ *
+ * @author Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
+ * @author Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
  */
 abstract class AbstractHypermedia
 {
@@ -35,16 +30,13 @@ abstract class AbstractHypermedia
     }
 
     /**
-     * Set the crawler
+     * Set the crawler.
      *
-     * @param HypermediaCrawler $crawler
-     * return $this
+     * @param CrawlerInterface $crawler.
      */
-    public function setCrawler(HypermediaCrawler $crawler)
+    public function setCrawler(CrawlerInterface $crawler)
     {
-         $this->crawler = $crawler;
-
-         return $this;
+        $this->crawler = $crawler;
     }
 
     /**

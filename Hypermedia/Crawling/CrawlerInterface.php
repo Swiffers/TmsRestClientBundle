@@ -19,7 +19,7 @@ interface CrawlerInterface
      */
     function go($crawlingPathId);
 
-	/**
+    /**
      * Crawl to an URL.
      *
      * @param string $url The url to crawl to.

@@ -37,7 +37,8 @@ class BuildCrawlingPathPass implements CompilerPassInterface
             );
 
             $crawlingPathDefinition = new DefinitionDecorator('tms_rest_client.hypermedia.crawling_path');
-            $crawlingPathDefinition->replaceArgument(0, new Reference($apiClientId));
+            $crawlingPathDefinition->replaceArgument(1, new Reference('tms_rest_client.hypermedia.crawler'));
+            $crawlingPathDefinition->replaceArgument(2, new Reference($apiClientId));
             $container->setDefinition($pathId, $crawlingPathDefinition);
 
             $crawlerDefinition->addMethodCall(

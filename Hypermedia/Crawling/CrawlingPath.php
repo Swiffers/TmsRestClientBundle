@@ -7,7 +7,7 @@ use Da\ApiClientBundle\Http\Response;
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem;
 use Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection;
 use Tms\Bundle\RestClientBundle\Factory\HypermediaFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tms\Bundle\RestClientBundle\Hypermedia\hydratation\HypermediaHydratationHandlerInterface;
 
 /**
  * CrawlingPath represents a path that a crawler can follow.
@@ -16,6 +16,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CrawlingPath implements CrawlingPathInterface
 {
+    /**
+     * The hydratation handler.
+     *
+     * @var HypermediaHydratationHandlerInterface
+     */
+    protected $hydratationHandler;
+
+    /**
+     * The crawler.
+     *
+     * @var CrawlerInterface
+     */
+    protected $crawler;
+
     /**
      * The api client.
      *
@@ -26,10 +40,18 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * Constructor
      *
-     * @param RestApiClientInterface $apiClient An api client.
+     * @param HypermediaHydratationHandlerInterface $hydratationHandler The hydratation handler.
+     * @param CrawlerInterface                      $crawler            The crawler.
+     * @param RestApiClientInterface                $apiClient          An api client.
      */
-    public function __construct(RestApiClientInterface $apiClient)
+    public function __construct(
+        HypermediaHydratationHandlerInterface $hydratationHandler,
+        CrawlerInterface $crawler,
+        RestApiClientInterface $apiClient
+    )
     {
+        $this->hydratationHandler = $hydratationHandler;
+        $this->crawler = $crawler;
         $this->apiClient = $apiClient;
     }
 
@@ -171,14 +193,14 @@ class CrawlingPath implements CrawlingPathInterface
             $path = sprintf('/%s', $path);
         }
 
-        $hypermedia = HypermediaFactory::build(
+        $hypermedia = $this->hydratationHandler->hydrate(
             $this
                 ->apiClient
                 ->get($path, $params, array(), false, $absolutePath)
                 ->getContent(true)
         );
 
-        $hypermedia->setCrawler($this);
+        $hypermedia->setCrawler($this->crawler);
 
         return $hypermedia;
     }
@@ -208,14 +230,14 @@ class CrawlingPath implements CrawlingPathInterface
             $path = sprintf('/%s', $path);
         }
 
-        $hypermedia = HypermediaFactory::build(
+        $hypermedia = $this->hydratationHandler->hydrate(
             $this
                 ->apiClient
                 ->$method($path, $params)
                 ->getContent(true)
         );
 
-        $hypermedia->setCrawler($this);
+        $hypermedia->setCrawler($this->crawler);
 
         return $hypermedia;
     }
