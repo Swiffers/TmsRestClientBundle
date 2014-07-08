@@ -3,6 +3,7 @@
 namespace Tms\Bundle\RestClientBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Sym
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -50,12 +51,21 @@ class BrowserController extends ContainerAware
      */
     public function findOneAction($crawling_path)
     {
-        $this->container->get('tms_rest_client.hypermedia.crawler')
+        $request = $this->container->get('request');
+        $queryParameters = $request->query;
+
+        $path = $queryParameters->get('path');
+        $slug = $queryParameters->get('slug');
+
+        $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
             ->go($crawling_path)
-            ->findOne($path)
+            ->findOne($path, $slug)
         ;
 
-        return array('crawlingPath' => $crawling_path);
+        return array(
+            'crawlingPath' => $crawling_path,
+            'hypermedia' => $hypermedia
+        );
     }
 
     /**
@@ -66,12 +76,35 @@ class BrowserController extends ContainerAware
      */
     public function findAction($crawling_path)
     {
-        $this->container->get('tms_rest_client.hypermedia.crawler')
+        $request = $this->container->get('request');
+        $queryParameters = $request->query;
+
+        $path = $queryParameters->get('path');
+        $params = $queryParameters->get('params', '');
+        if (!$params) {
+            $params = array();
+        } else {
+            $params = json_decode($params, true);
+        }
+
+        if (false === $params) {
+            return new Response(
+                'TmsRestClientBundle:Browser:error.json.twig',
+                array(
+                    'error' => 'Bad JSON for find parameters.'
+                )
+            );
+        }
+
+        $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
             ->go($crawling_path)
-            ->find($path)
+            ->find($path, $params)
         ;
 
-        return array('crawlingPath' => $crawling_path);
+        return array(
+            'crawlingPath' => $crawling_path,
+            'hypermedia' => $hypermedia
+        );
     }
 
     /**
@@ -82,12 +115,18 @@ class BrowserController extends ContainerAware
      */
     public function inquireAction($crawling_path)
     {
-        $this->container->get('tms_rest_client.hypermedia.crawler')
+        $request = $this->container->get('request');
+        $path = $request->query->get('path');
+
+        $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
             ->go($crawling_path)
             ->inquire($path)
         ;
 
-        return array('crawlingPath' => $crawling_path);
+        return array(
+            'crawlingPath' => $crawling_path,
+            'hypermedia' => $hypermedia
+        );
     }
 
     /**
@@ -98,10 +137,10 @@ class BrowserController extends ContainerAware
      */
     public function crawlAction()
     {
-        $this->container->get('tms_rest_client.hypermedia.crawler')
+        $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
             ->crawl($url)
         ;
 
-        return array();
+        return array('hypermedia' => $hypermedia);
     }
 }

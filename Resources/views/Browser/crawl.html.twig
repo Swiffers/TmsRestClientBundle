@@ -1,4 +1,17 @@
 {% extends "TmsRestClientBundle:Browser:layout.html.twig" %}
 
 {% block content %}
+    {% if hypermedia.data is defined %}
+        data
+    {% endif %}
+
+    {% if hypermedia.links is defined %}
+        {% for name, link in hypermedia.links %}
+            <a href="{{ path('tms_restclient_browser_crawl', {url: link}) }}">{{ name }}</a>
+        {% endfor %}
+    {% endif %}
+
+    {% if hypermedia.embedded is defined %}
+        embedded
+    {% endif %}
 {% endblock %}
