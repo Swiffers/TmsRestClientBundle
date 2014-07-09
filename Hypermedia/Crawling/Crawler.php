@@ -65,8 +65,10 @@ class Crawler implements CrawlerInterface
     public function crawl($url, array $params = array())
     {
         $crawlingPath = $this->retrieveCrawlingPath($url);
+        $params = $this->retrieveUrlParams($url);
+        $url = $this->retrieveBaseUrl($url);
 
-        $crawlingPath->crawl($url, $params, true);
+        return $crawlingPath->crawl($url, $params, true);
     }
 
     /**
@@ -75,8 +77,10 @@ class Crawler implements CrawlerInterface
     public function execute($url, $method, array $params = array())
     {
         $crawlingPath = $this->retrieveCrawlingPath($url);
+        $params = $this->retrieveUrlParams($url);
+        $url = $this->retrieveBaseUrl($url);
 
-        $crawlingPath->execute($url, $method, $params);
+        return $crawlingPath->execute($url, $method, $params);
     }
 
     /**
@@ -98,5 +102,47 @@ class Crawler implements CrawlerInterface
             'There is no crawling path for the url "%s".',
             $url
         ));
+    }
+
+    /**
+     * Retrieve the params of the query string of an URL.
+     *
+     * @param string $url The URL.
+     *
+     * @return array The params.
+     */
+    protected function retrieveUrlParams($url)
+    {
+        $params = array();
+        $parsedUrl = parse_url($url);
+
+        if (isset($parsedUrl['query'])) {
+            $parameters = explode('&', $parsedUrl['query']);
+
+            foreach ($parameters as $parameter) {
+                list($name, $value) = explode('=', $parameter);
+                $params[$name] = $value;
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * Retrieve the base URL of an URL.
+     *
+     * @param string $url The URL.
+     *
+     * @return string The base URL.
+     */
+    protected function retrieveBaseUrl($url)
+    {
+        $parsedUrl = parse_url($url);
+
+        return sprintf('%s://%s%s',
+            $parsedUrl['scheme'],
+            $parsedUrl['host'],
+            $parsedUrl['path']
+        );
     }
 }
