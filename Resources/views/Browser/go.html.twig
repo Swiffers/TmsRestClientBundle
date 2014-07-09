@@ -3,21 +3,26 @@
 {% block content %}
     <ul>
         <li>
+            <h2>Find one</h2>
             <form action="{{ path('tms_restclient_browser_findone', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
-                <input type="text" name="path" />
-                <input type="submit" value="findOne" />
+                <div><label for="path">Path</label><input type="text" name="path" /></div>
+                <div><label for="slug">Slug</label><input type="text" name="slug" /></div>
+                <div><input type="submit" value="Find one" /></div>
             </form>
         </li>
         <li>
+            <h2>Find</h2>
             <form action="{{ path('tms_restclient_browser_find', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
-                <input type="text" name="path" />
-                <input type="submit" value="find" />
+                <div><label for="path">Path</label><input type="text" name="path" /></div>
+                <div><label for="params">Params (JSON)</label><textarea name="params"></textarea></div>
+                <div><input type="submit" value="Find" /></div>
             </form>
         </li>
         <li>
+            <h2>Inquire</h2>
             <form action="{{ path('tms_restclient_browser_inquire', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
-                <input type="text" name="path" />
-                <input type="submit" value="inquire" />
+                <div><label for="path">Path</label><input type="text" name="path" /></div>
+                <div><input type="submit" value="Inquire" /></div>
             </form>
         </li>
     </ul>

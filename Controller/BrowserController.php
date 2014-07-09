@@ -3,7 +3,7 @@
 namespace Tms\Bundle\RestClientBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
-use Sym
+use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -47,7 +47,7 @@ class BrowserController extends ContainerAware
      * Find one.
      *
      * @Route("/find-one/{crawling_path}")
-     * @Template("TmsRestClientBundle:Browser:crawl.json.twig")
+     * @Template("TmsRestClientBundle:Browser:crawl.html.twig")
      */
     public function findOneAction($crawling_path)
     {
@@ -72,7 +72,7 @@ class BrowserController extends ContainerAware
      * Find.
      *
      * @Route("/find/{crawling_path}")
-     * @Template("TmsRestClientBundle:Browser:crawl.json.twig")
+     * @Template("TmsRestClientBundle:Browser:crawl.html.twig")
      */
     public function findAction($crawling_path)
     {
@@ -87,13 +87,15 @@ class BrowserController extends ContainerAware
             $params = json_decode($params, true);
         }
 
-        if (false === $params) {
-            return new Response(
-                'TmsRestClientBundle:Browser:error.json.twig',
+        if (null === $params) {
+            $content = $this->container->get('templating')->render(
+                'TmsRestClientBundle:Browser:error.html.twig',
                 array(
                     'error' => 'Bad JSON for find parameters.'
                 )
             );
+
+            return new Response($content);
         }
 
         $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
@@ -111,7 +113,7 @@ class BrowserController extends ContainerAware
      * Inquire.
      *
      * @Route("/inquire/{crawling_path}")
-     * @Template("TmsRestClientBundle:Browser:crawl.json.twig")
+     * @Template("TmsRestClientBundle:Browser:crawl.html.twig")
      */
     public function inquireAction($crawling_path)
     {
@@ -133,10 +135,13 @@ class BrowserController extends ContainerAware
      * Crawl.
      *
      * @Route("/crawl")
-     * @Template("TmsRestClientBundle:Browser:crawl.json.twig")
+     * @Template("TmsRestClientBundle:Browser:crawl.html.twig")
      */
     public function crawlAction()
     {
+        $request = $this->container->get('request');
+        $url = $request->query->get('url');
+
         $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
             ->crawl($url)
         ;
