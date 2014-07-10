@@ -18,6 +18,7 @@ abstract class AbstractHypermedia
     protected $metadata;
     protected $data;
     protected $links;
+    protected $actions;
 
     /**
      * Constructor
@@ -49,6 +50,7 @@ abstract class AbstractHypermedia
         $this->setMetadata($raw);
         $this->setData($raw);
         $this->setLinks($raw);
+        $this->setActions($raw);
     }
 
     /**
@@ -91,6 +93,20 @@ abstract class AbstractHypermedia
         }
 
         $this->links = $raw['links'];
+    }
+
+    /**
+     * Set actions
+     *
+     * @param array $raw
+     */
+    public function setActions(array $raw)
+    {
+        if(!isset($raw['actions'])) {
+            throw new NotFoundHttpException("No 'actions' section found in hypermedia raw.");
+        }
+
+        $this->actions = $raw['actions'];
     }
 
     /**
@@ -148,7 +164,7 @@ abstract class AbstractHypermedia
      *
      * @return array
      */
-    public function getAllLinks()
+    public function getLinks()
     {
         return $this->links;
     }
@@ -215,6 +231,16 @@ abstract class AbstractHypermedia
     public function getLinkUrlPath($name)
     {
         return parse_url($this->getLinkUrl($name), PHP_URL_PATH);
+    }
+
+    /**
+     * Get actions
+     *
+     * @return array
+     */
+    public function getActions()
+    {
+        return $this->actions;
     }
 
     /**
