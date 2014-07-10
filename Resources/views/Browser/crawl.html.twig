@@ -5,7 +5,7 @@
 {% macro displayData(name, value, isLink) %}
     {% import _self as macros %}
     
-    {% if name == 'links' %}
+    {% if name is same as('links') %}
         {% set isLink = 1 %}
     {% endif %}
 
@@ -26,7 +26,7 @@
         {% endif %}
     </li>
 
-    {% if name == 'links' %}
+    {% if name is same as('links') %}
         {% set isLink = 0 %}
     {% endif %}
 {% endmacro %}
@@ -38,9 +38,15 @@
         </ul>
     {% endif %}
 
-    {% if hypermedia.allLinks is defined %}
+    {% if hypermedia.links is defined %}
         <ul>
-            {{ macros.displayData('links', hypermedia.allLinks, 0) }}
+            {{ macros.displayData('links', hypermedia.links, 0) }}
+        </ul>
+    {% endif %}
+
+    {% if hypermedia.actions is defined %}
+        <ul>
+            {{ macros.displayData('actions', hypermedia.actions, 0) }}
         </ul>
     {% endif %}
 
