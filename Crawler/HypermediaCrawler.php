@@ -171,7 +171,7 @@ class HypermediaCrawler
         $hypermedia = HypermediaFactory::build(
             $this
                 ->apiClient
-                ->get($path, $params, array(), false, $absolutePath)
+                ->get(sprintf("/%s", $path), $params, array(), false, $absolutePath)
                 ->getContent(true)
         );
         $hypermedia->setCrawler($this);
