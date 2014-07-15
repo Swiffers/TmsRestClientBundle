@@ -4,8 +4,10 @@ namespace Tms\Bundle\RestClientBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Tms\Bundle\RestClientBundle\Hypermedia\Crawling\AbstractHypermedia;
 
 /**
  * @author Thomas Prelot <thomas.prelot@gmail.com>
@@ -62,9 +64,15 @@ class BrowserController extends ContainerAware
             ->findOne($path, $slug)
         ;
 
+        $source = $this->container->get('router')->generate(
+            'tms_restclient_browser_findone',
+            array_merge($request->query->all(), $request->attributes->all())
+        );
+
         return array(
             'crawlingPath' => $crawling_path,
-            'hypermedia' => $hypermedia
+            'hypermedia' => $hypermedia,
+            'source' => $source
         );
     }
 
@@ -103,31 +111,43 @@ class BrowserController extends ContainerAware
             ->find($path, $params)
         ;
 
+        $source = $this->container->get('router')->generate(
+            'tms_restclient_browser_find',
+            array_merge($request->query->all(), $request->attributes->all())
+        );
+
         return array(
             'crawlingPath' => $crawling_path,
-            'hypermedia' => $hypermedia
+            'hypermedia' => $hypermedia,
+            'source' => $source
         );
     }
 
     /**
-     * Inquire.
+     * Get the info of the path.
      *
-     * @Route("/inquire/{crawling_path}")
+     * @Route("/info/{crawling_path}")
      * @Template("TmsRestClientBundle:Browser:crawl.html.twig")
      */
-    public function inquireAction($crawling_path)
+    public function getPathInfoAction($crawling_path)
     {
         $request = $this->container->get('request');
         $path = $request->query->get('path');
 
         $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
             ->go($crawling_path)
-            ->inquire($path)
+            ->getPathInfo($path)
         ;
+
+        $source = $this->container->get('router')->generate(
+            'tms_restclient_browser_getpathinfo',
+            array_merge($request->query->all(), $request->attributes->all())
+        );
 
         return array(
             'crawlingPath' => $crawling_path,
-            'hypermedia' => $hypermedia
+            'hypermedia' => $hypermedia,
+            'source' => $source
         );
     }
 
@@ -141,11 +161,52 @@ class BrowserController extends ContainerAware
     {
         $request = $this->container->get('request');
         $url = $request->query->get('url');
+        $params = $request->query->get('params', array());
+        if (!$params) {
+            $params = array();
+        }
 
         $hypermedia = $this->container->get('tms_rest_client.hypermedia.crawler')
-            ->crawl($url)
+            ->crawl($url, $params)
         ;
 
-        return array('hypermedia' => $hypermedia);
+        $source = $this->container->get('router')->generate(
+            'tms_restclient_browser_crawl',
+            $request->query->all()
+        );
+
+        return array(
+            'hypermedia' => $hypermedia,
+            'source' => $source
+        );
+    }
+
+    /**
+     * Execute.
+     *
+     * @Route("/execute")
+     * @Template("TmsRestClientBundle:Browser:crawl.html.twig")
+     */
+    public function executeAction()
+    {
+        $request = $this->container->get('request');
+        $url = $request->query->get('url');
+        $method = $request->query->get('method');
+        $params = $request->request->get('params', array());
+        if (!$params) {
+            $params = array();
+        }
+
+        $result = $this->container->get('tms_rest_client.hypermedia.crawler')
+            ->execute($url, $method, $params)
+        ;
+
+        if ($result instanceof AbstractHypermedia) {
+            return array('hypermedia' => $hypermedia);
+        }
+
+        $source = $request->query->get('source');
+
+        return new RedirectResponse($source);
     }
 }
