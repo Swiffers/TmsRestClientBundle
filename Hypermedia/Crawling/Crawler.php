@@ -65,8 +65,8 @@ class Crawler implements CrawlerInterface
     public function crawl($url, array $params = array())
     {
         $crawlingPath = $this->retrieveCrawlingPath($url);
-        $params = $this->retrieveUrlParams($url);
-        $url = $this->retrieveBaseUrl($url);
+        $params = array_merge($params, $this->retrieveUrlParams($url));
+        $url = $this->retrieveBaseUrl($url, $params);
 
         return $crawlingPath->crawl($url, $params, true);
     }
@@ -77,8 +77,8 @@ class Crawler implements CrawlerInterface
     public function execute($url, $method, array $params = array())
     {
         $crawlingPath = $this->retrieveCrawlingPath($url);
-        $params = $this->retrieveUrlParams($url);
-        $url = $this->retrieveBaseUrl($url);
+        $params = array_merge($params, $this->retrieveUrlParams($url));
+        $url = $this->retrieveBaseUrl($url, $params);
 
         return $crawlingPath->execute($url, $method, $params);
     }
@@ -135,14 +135,20 @@ class Crawler implements CrawlerInterface
      *
      * @return string The base URL.
      */
-    protected function retrieveBaseUrl($url)
+    protected function retrieveBaseUrl($url, array $params)
     {
-        $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url(urldecode($url));
 
-        return sprintf('%s://%s%s',
+        $baseUrl = sprintf('%s://%s%s',
             $parsedUrl['scheme'],
             $parsedUrl['host'],
             $parsedUrl['path']
         );
+
+        foreach ($params as $key => $value) {
+            $baseUrl = str_replace(sprintf('{%s}', $key), $value, $baseUrl);
+        }
+
+        return $baseUrl;
     }
 }

@@ -19,10 +19,10 @@
             </form>
         </li>
         <li>
-            <h2>Inquire</h2>
-            <form action="{{ path('tms_restclient_browser_inquire', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
+            <h2>Info</h2>
+            <form action="{{ path('tms_restclient_browser_getpathinfo', {crawling_path: crawlingPath})}}" method="get" class="tms_search">
                 <div><label for="path">Path</label><input type="text" name="path" /></div>
-                <div><input type="submit" value="Inquire" /></div>
+                <div><input type="submit" value="Info" /></div>
             </form>
         </li>
     </ul>

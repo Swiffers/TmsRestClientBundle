@@ -108,9 +108,9 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function inquire($path, $absolutePath = false)
+    public function getPathInfo($path, $absolutePath = false)
     {
-        $path = sprintf("%s/inquiry", $path);
+        $path = sprintf("%s/info", $path);
 
         $hypermedia = $this->crawl($path, array(), $absolutePath);
 
@@ -230,15 +230,17 @@ class CrawlingPath implements CrawlingPathInterface
             $path = sprintf('/%s', $path);
         }
 
-        $hypermedia = $this->hydratationHandler->hydrate(
-            $this
-                ->apiClient
-                ->$method($path, $params)
-                ->getContent(true)
-        );
+        $result = $this
+            ->apiClient
+            ->$method($path, $params)
+            ->getContent(true)
+        ;
 
-        $hypermedia->setCrawler($this->crawler);
+        if (is_array($result) && $result['metadata']) {
+            $result = $this->hydratationHandler->hydrate($result);
+            $result->setCrawler($this->crawler);
+        }
 
-        return $hypermedia;
+        return $result;
     }
 }

@@ -42,14 +42,14 @@ interface CrawlingPathInterface
     function find($path, array $params = array(), $absolutePath = false);
 
     /**
-     * Inquire.
+     * Get the info of the path.
      *
-     * @param string  $path The path.
+     * @param string  $path         The path.
      * @param boolean $absolutePath Whether it is an absolute path or not.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
      */
-    function inquire($path, $absolutePath = false);
+    function getPathInfo($path, $absolutePath = false);
 
     /**
      * Crawl an URL.
