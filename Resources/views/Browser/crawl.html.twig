@@ -26,7 +26,7 @@
             <ul>
                 {% for embeddedName, embeddedValue in value %}
                     {% if embeddedName is same as('actions') and value.data is defined %}
-                        {% set data = value.data %}plop
+                        {% set data = value.data %}
                     {% elseif embeddedName is same as('actions') %}
                     plip
                     {% endif %}
@@ -34,7 +34,7 @@
                     {% if isAction == 2 and (embeddedName is same as('requiredParams') or embeddedName is same as('optionalParams')) %}
                         <li>{{ embeddedName }}:
                             <ul>
-                                {% for field in embeddedValue %}
+                                {% for field, requirements in embeddedValue %}
                                     {% if data is defined and data[field] is defined and field is same as('id') %}
                                         <input type="hidden" name="{{ 'params[' ~ field ~ ']' }}" value="{{ data[field] }}" />
                                     {% else %}
