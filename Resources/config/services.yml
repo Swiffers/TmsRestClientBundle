@@ -1,7 +1,3 @@
 parameters:
-    tms_rest_client.router.class: Tms\Bundle\RestClientBundle\Router\HypermediaRouter
 
 services:
-    tms_rest_client.router:
-        class: %tms_rest_client.router.class%
-        arguments: [@router]
