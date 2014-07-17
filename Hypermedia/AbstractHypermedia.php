@@ -57,6 +57,7 @@ abstract class AbstractHypermedia
      * Set metadata
      *
      * @param array $raw
+     * @return $this;
      */
     public function setMetadata(array $raw)
     {
@@ -68,23 +69,10 @@ abstract class AbstractHypermedia
     }
 
     /**
-     * Set data
-     *
-     * @param array $raw
-     */
-    public function setData(array $raw)
-    {
-        if(!isset($raw['data'])) {
-            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
-        }
-
-        $this->data = $raw['data'];
-    }
-
-    /**
      * Set links
      *
      * @param array $raw
+     * @return $this;
      */
     public function setLinks(array $raw)
     {
@@ -93,6 +81,8 @@ abstract class AbstractHypermedia
         }
 
         $this->links = $raw['links'];
+
+        return $this;
     }
 
     /**
@@ -266,4 +256,11 @@ abstract class AbstractHypermedia
     {
         return $this->followUrl($this->getLinkUrl($name));
     }
+
+    /**
+     * Set data
+     * 
+     * @param array $raw
+     */
+    abstract public function setData(array $raw);
 }

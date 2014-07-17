@@ -57,7 +57,7 @@ class HypermediaCollectionIterator implements \Iterator
      */
     public function hasNext()
     {
-        if ($this->cursor+2 > count($this->hypermediaCollection->getData())) {
+        if ($this->cursor >= count($this->hypermediaCollection->getData())) {
             return false;
         }
 
