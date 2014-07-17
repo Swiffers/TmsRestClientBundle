@@ -256,7 +256,7 @@ abstract class AbstractHypermedia
      *
      * @return mixed HypermediaCollection OR HypermediaItem
      */
-    public function followUrl($absoluteUrl, array $params = array())
+    protected function followUrl($absoluteUrl, array $params = array())
     {
         return $this->crawler->crawl($absoluteUrl, $params, true);
     }
@@ -270,5 +270,57 @@ abstract class AbstractHypermedia
     public function followLink($name)
     {
         return $this->followUrl($this->getLinkUrl($name));
+    }
+
+    /**
+     * Execute an action of the hypermedia
+     *
+     * @param string $name   The name of the action
+     * @param array  $params The parameters of the query
+     * @param string $method The HTTP method
+     *
+     * @return mixed The result of the action
+     */
+    public function executeAction($name, array $params = array(), $method = '')
+    {
+        $action = null;
+
+        foreach ($this->actions as $actionName => $actionMethods) {
+            if ($name === $actionName) {
+                if (2 <= count($actionMethods)) {
+                    if (empty($method)) {
+                        $possibleMethods = array();
+
+                        foreach ($actionMethods as $actionMethod) {
+                            $possibleMethods[] = $actionMethod['method'];
+                        }
+
+                        throw new \LogicException(sprintf(
+                            'The method must be defined because there is many possible methods ["%s"] for the action "%s".',
+                            implode($possibleMethods, '", "'),
+                            $name
+                        ));
+                    }
+
+                    foreach ($actionMethods as $actionMethod) {
+                        if ($actionMethod['method'] === $method) {
+                            $action = $actionMethod;
+
+                            break 2;
+                        }
+                    }
+
+                    throw new \LogicException(sprintf(
+                        'There is no method "%s" for the action "%s"',
+                        $method,
+                        $name
+                    ));
+                }
+
+                $action = $actionMethods[0];
+            }
+        }
+
+        return $this->crawler->execute($action['href'], $action['method'], $params, true);
     }
 }
