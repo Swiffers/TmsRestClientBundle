@@ -11,7 +11,7 @@
 namespace Tms\Bundle\RestClientBundle\Adapter;
 
 use Pagerfanta\Adapter\AdapterInterface;
-use Tms\Bundle\RestClientBundle\Crawler\HypermediaCrawler;
+use Tms\Bundle\RestClientBundle\Hypermedia\Crawling\CrawlerInterface;
 use Tms\Bundle\RestClientBundle\Iterator\HypermediaCollectionIterator;
 
 class HypermediaCollectionRestAdapter implements AdapterInterface
@@ -22,10 +22,10 @@ class HypermediaCollectionRestAdapter implements AdapterInterface
     /**
      * Constructor.
      *
-     * @param HypermediaCrawler $crawler
+     * @param CrawlerInterface $crawler
      * @param string $collectionName
      */
-    public function __construct(HypermediaCrawler $crawler, $collectionName)
+    public function __construct(CrawlerInterface $crawler, $collectionName)
     {
         $this->crawler = $crawler;
         $this->collectionName = $collectionName;
