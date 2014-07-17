@@ -271,11 +271,4 @@ abstract class AbstractHypermedia
     {
         return $this->followUrl($this->getLinkUrl($name));
     }
-
-    /**
-     * Set data
-     *
-     * @param array $raw
-     */
-    abstract public function setData(array $raw);
 }
