@@ -19,7 +19,7 @@
         "twig/twig":                           "*",
         "jms/serializer-bundle":               "dev-master",
         "friendsofsymfony/rest-bundle":        "dev-master",
-        "da/api-client-bundle":                "dev-hypermedia"
+        "da/api-client-bundle":                "1.1.*"
     },
     "autoload": {
         "psr-0": { "Tms\\Bundle\\RestClientBundle": "" }
