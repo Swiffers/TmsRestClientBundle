@@ -258,7 +258,7 @@ abstract class AbstractHypermedia
      */
     public function followUrl($absoluteUrl, array $params = array())
     {
-        return $this->crawler->findPath($absoluteUrl, $params);
+        return $this->crawler->crawl($absoluteUrl, $params, true);
     }
 
     /**
