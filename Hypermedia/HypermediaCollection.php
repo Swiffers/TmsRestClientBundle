@@ -23,24 +23,8 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setData(array $raw)
-    {
-        if(!isset($raw['data'])) {
-            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
-        }
-
-        // Build a collection of HypermediaItem
-        foreach($raw['data'] as $item)
-        {
-            $this->data[] = HypermediaFactory::build($item);
-        }
-    }
-
-    /**
      * Get array data
-     * 
+     *
      * @return array
      */
     public function getArrayData()
@@ -57,7 +41,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Follow the nextPage link
-     * 
+     *
      * @return HypermediaCollection
      */
     public function nextPage()
@@ -67,17 +51,17 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Follow the previousPage link
-     * 
+     *
      * @return HypermediaCollection
      */
     public function previousPage()
     {
         return $this->followLink('previousPage');
     }
-    
+
     /**
      * Check if the collection has next page
-     * 
+     *
      * @return boolean
      */
     public function hasNextPage()
@@ -87,7 +71,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Check if the collection has previous page
-     * 
+     *
      * @return boolean
      */
     public function hasPreviousPage()
@@ -97,7 +81,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Follow the lastPage link
-     * 
+     *
      * @return HypermediaCollection
      */
     public function lastPage()
@@ -107,7 +91,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Follow the firstPage link
-     * 
+     *
      * @return HypermediaCollection
      */
     public function firstPage()
@@ -117,7 +101,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Follow a specific page number link
-     * 
+     *
      * @param integer $page
      * @return HypermediaCollection
      */
@@ -130,7 +114,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
 
     /**
      * Count collection items
-     * 
+     *
      * @return integer
      */
     public function countItems()

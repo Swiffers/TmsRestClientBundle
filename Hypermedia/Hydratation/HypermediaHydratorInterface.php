@@ -11,10 +11,17 @@ namespace Tms\Bundle\RestClientBundle\Hypermedia\Hydratation;
 interface HypermediaHydratorInterface
 {
     /**
+     * Set an hydratation handler.
+     *
+     * @param HypermediaHydratationHandlerInterface $hydratationHandler.
+     */
+    public function setHydratationHandler(HypermediaHydratationHandlerInterface $hydratationHandler);
+
+    /**
      * Hydrate an hypermedia.
-     * 
+     *
      * @param array $hypermedia The raw hypermedia.
-     * 
+     *
      * @return object The hypermedia.
      */
     public function hydrate(array $hypermedia);

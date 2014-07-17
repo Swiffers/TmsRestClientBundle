@@ -11,12 +11,27 @@ namespace Tms\Bundle\RestClientBundle\Hypermedia\Hydratation;
 abstract class AbstractHypermediaHydrator implements HypermediaHydratorInterface
 {
     /**
+     * The hydratation handler.
+     *
+     * @var HypermediaHydratationHandlerInterface
+     */
+    protected $hydratationHandler;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setHydratationHandler(HypermediaHydratationHandlerInterface $hydratationHandler)
+    {
+        $this->hydratationHandler = $hydratationHandler;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function hydrate(array $raw)
     {
         $hypermediaClassName = $this->getHypermediaClassName();
-        
+
         return new $hypermediaClassName($raw);
     }
 

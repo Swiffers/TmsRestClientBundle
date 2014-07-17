@@ -69,6 +69,21 @@ abstract class AbstractHypermedia
     }
 
     /**
+     * Set data
+     *
+     * @param array $raw
+     * @return $this;
+     */
+    public function setData(array $raw)
+    {
+        if(!isset($raw['data'])) {
+            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
+        }
+
+        $this->data = $raw['data'];
+    }
+
+    /**
      * Set links
      *
      * @param array $raw
@@ -259,7 +274,7 @@ abstract class AbstractHypermedia
 
     /**
      * Set data
-     * 
+     *
      * @param array $raw
      */
     abstract public function setData(array $raw);

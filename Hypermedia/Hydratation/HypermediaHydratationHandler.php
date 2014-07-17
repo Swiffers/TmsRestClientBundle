@@ -27,6 +27,8 @@ class HypermediaHydratationHandler implements HypermediaHydratationHandlerInterf
      */
     public function setHydrator($id, HypermediaHydratorInterface $hydrator)
     {
+        $hydrator->setHydratationHandler($this);
+
         $this->hydrators[$id] = $hydrator;
     }
 
@@ -48,7 +50,7 @@ class HypermediaHydratationHandler implements HypermediaHydratationHandlerInterf
 
         return $this->hydrators[$hydratorId];
     }
-    
+
     /**
      * {@inheritdoc}
      */
