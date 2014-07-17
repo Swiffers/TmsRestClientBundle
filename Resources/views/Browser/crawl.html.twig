@@ -4,7 +4,7 @@
 
 {% macro displayData(name, value, source, isLink, isAction, data) %}
     {% import _self as macros %}
-    
+
     {% if name is same as('links') %}
         {% set isLink = 1 %}
     {% endif %}
@@ -72,6 +72,8 @@
 {% endmacro %}
 
 {% block content %}
+    {{ block('nav') }}
+
     {% if hypermedia.metadata is defined %}
         <ul>
             {{ macros.displayData('metadata', hypermedia.metadata, source, 0, 0) }}
