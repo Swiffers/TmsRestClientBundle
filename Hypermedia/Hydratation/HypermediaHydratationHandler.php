@@ -3,6 +3,7 @@
 namespace Tms\Bundle\RestClientBundle\Hypermedia\Hydratation;
 
 use Tms\Bundle\RestClientBundle\Hypermedia\Constants;
+use Tms\Bundle\RestClientBundle\Hypermedia\Crawling\CrawlerInterface;
 
 /**
  * HypermediaHydratationHandler is a basic implementation of
@@ -13,11 +14,26 @@ use Tms\Bundle\RestClientBundle\Hypermedia\Constants;
 class HypermediaHydratationHandler implements HypermediaHydratationHandlerInterface
 {
     /**
+     * The crawler.
+     *
+     * @var CrawlerInterface
+     */
+    protected $crawler;
+
+    /**
      * The hydrators.
      *
      * @var array
      */
     protected $hydrators = array();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCrawler(CrawlerInterface $crawler)
+    {
+        $this->crawler = $crawler;
+    }
 
     /**
      * Set a hydrator.
@@ -59,7 +75,10 @@ class HypermediaHydratationHandler implements HypermediaHydratationHandlerInterf
         if (isset($hypermedia['metadata'][Constants::SERIALIZER_CONTEXT_GROUP_NAME])) {
             $hydratorId = $hypermedia['metadata'][Constants::SERIALIZER_CONTEXT_GROUP_NAME];
 
-            return $this->getHydrator($hydratorId)->hydrate($hypermedia);
+            $hypermedia = $this->getHydrator($hydratorId)->hydrate($hypermedia);
+            $hypermedia->setCrawler($this->crawler);
+
+            return $hypermedia;
         }
 
         throw new \LogicException(sprintf(

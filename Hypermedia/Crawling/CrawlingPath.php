@@ -50,6 +50,8 @@ class CrawlingPath implements CrawlingPathInterface
         RestApiClientInterface $apiClient
     )
     {
+        $hydratationHandler->setCrawler($crawler);
+
         $this->hydratationHandler = $hydratationHandler;
         $this->crawler = $crawler;
         $this->apiClient = $apiClient;
@@ -200,8 +202,6 @@ class CrawlingPath implements CrawlingPathInterface
                 ->getContent(true)
         );
 
-        $hypermedia->setCrawler($this->crawler);
-
         return $hypermedia;
     }
 
@@ -238,7 +238,6 @@ class CrawlingPath implements CrawlingPathInterface
 
         if (is_array($result) && $result['metadata']) {
             $result = $this->hydratationHandler->hydrate($result);
-            $result->setCrawler($this->crawler);
         }
 
         return $result;

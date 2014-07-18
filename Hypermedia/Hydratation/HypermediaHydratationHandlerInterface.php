@@ -3,6 +3,7 @@
 namespace Tms\Bundle\RestClientBundle\Hypermedia\Hydratation;
 
 use Tms\Bundle\RestClientBundle\Hypermedia\Constants;
+use Tms\Bundle\RestClientBundle\Hypermedia\Crawling\CrawlerInterface;
 
 /**
  * HypermediaHydratationHandlerInterface is the interface a class must
@@ -12,6 +13,13 @@ use Tms\Bundle\RestClientBundle\Hypermedia\Constants;
  */
 interface HypermediaHydratationHandlerInterface
 {
+    /**
+     * Set a crawler.
+     *
+     * @param CrawlerInterface $crawler.
+     */
+    public function setCrawler(CrawlerInterface $crawler);
+
     /**
      * Hydrate an hypermedia.
      * 
