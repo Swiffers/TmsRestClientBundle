@@ -76,11 +76,11 @@ abstract class AbstractHypermedia
      */
     public function setData(array $raw)
     {
-        if(!isset($raw['data'])) {
+        if(!isset($raw['data']) && 'info' !== $raw['metadata']['type']) {
             throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
         }
 
-        $this->data = $raw['data'];
+        $this->data = isset($raw['data']) ? $raw['data'] : null;
     }
 
     /**
@@ -91,11 +91,11 @@ abstract class AbstractHypermedia
      */
     public function setLinks(array $raw)
     {
-        if(!isset($raw['links'])) {
+        if(!isset($raw['links']) && 'info' !== $raw['metadata']['type']) {
             throw new NotFoundHttpException("No 'links' section found in hypermedia raw.");
         }
 
-        $this->links = $raw['links'];
+        $this->links = isset($raw['links']) ? $raw['links'] : null;
 
         return $this;
     }
@@ -284,8 +284,11 @@ abstract class AbstractHypermedia
     public function executeAction($name, array $params = array(), $method = '')
     {
         $action = null;
+        $possibleActions = array();
 
         foreach ($this->actions as $actionName => $actionMethods) {
+            $possibleActions[] = $actionName;
+
             if ($name === $actionName) {
                 if (2 <= count($actionMethods)) {
                     if (empty($method)) {
@@ -311,13 +314,75 @@ abstract class AbstractHypermedia
                     }
 
                     throw new \LogicException(sprintf(
-                        'There is no method "%s" for the action "%s"',
+                        'There is no method "%s" for the action "%s".',
                         $method,
                         $name
                     ));
                 }
 
                 $action = $actionMethods[0];
+            }
+        }
+
+        if (null === $action) {
+            throw new \LogicException(sprintf(
+                'There is no action "%s" in the list of available actions ["%s"].',
+                $name,
+                implode($possibleActions, '", "')
+            ));
+        }
+
+        foreach ($action['requiredParams'] as $paramName => $paramRequirements) {
+            if (!isset($params[$paramName])) {
+                if (isset($this->data[$paramName])) {
+                    $params[$paramName] = $this->data[$paramName];
+                }
+            }
+
+            if (!preg_match(sprintf('/^%s$/', $paramRequirements), $params[$paramName])) {
+                throw new \LogicException(sprintf(
+                    'The value "%s" of the parameter "%s" of the action "%s" must respect the requirements "%s".',
+                    $params[$paramName],
+                    $paramName,
+                    $name,
+                    $paramRequirements
+                ));
+            }
+
+            if (in_array(strtoupper($action['method']), array('PUT', 'PATCH'))) {
+                $this->setDataField($paramName, $params[$paramName]);
+            }
+
+            if (!isset($this->data[$paramName])) {
+                throw new \LogicException(sprintf(
+                    'The parameter "%s" is required for the action "%s".',
+                    $paramName,
+                    $name
+                ));
+            }
+        }
+
+        foreach ($action['optionalParams'] as $paramName => $paramRequirements) {
+            if (!array_key_exists($paramName, $params)) {
+                if (array_key_exists($paramName, $this->data)) {
+                    $params[$paramName] = $this->data[$paramName];
+                }
+            }
+
+            if (array_key_exists($paramName, $params)) {
+                if (!preg_match(sprintf('/^%s$/', $paramRequirements), $params[$paramName])) {
+                    throw new \LogicException(sprintf(
+                        'The value "%s" of the parameter "%s" of the action "%s" must respect the requirements "%s".',
+                        $params[$paramName],
+                        $paramName,
+                        $name,
+                        $paramRequirements
+                    ));
+                }
+
+                if (in_array(strtoupper($action['method']), array('PUT', 'PATCH'))) {
+                    $this->setDataField($paramName, $params[$paramName]);
+                }
             }
         }
 

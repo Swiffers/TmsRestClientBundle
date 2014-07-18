@@ -29,15 +29,18 @@ class HypermediaItem extends AbstractHypermedia
     }
 
     /**
-     * {@inheritdoc}
+     * Set the value of a field
+     *
+     * @param string $field The name of the field
+     * @param mixed  $value The value of the field
+     *
+     * @return HypermediaItem This.
      */
-    public function setData(array $raw)
+    public function setDataField($field, $value)
     {
-        if(!isset($raw['data'])) {
-            throw new NotFoundHttpException("No 'data' section found in hypermedia raw.");
-        }
-    
-        $this->data = $raw['data'];
+        $this->data[$field] = $value;
+
+        return $this;
     }
 
     /**
