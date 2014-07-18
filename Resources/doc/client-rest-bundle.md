@@ -3,29 +3,11 @@
 ## API CONFIGURATION ##
 
 ```yml
-tms_rest_client:
-    crawlers:
-        operation_manager:
-            da_api_client: da_api_client.api.operation
-                resources: 
-                    offers:
-                        path: "/offers"
-                        methods:
-                            patchStatus:
-                                path:       "/{id}/status"
-                                method:     PATCH
-                                arguments:  []
-    
-                    operations: 
-                        path: "/operations"
-    
-                    operation_offers:
-                        path: "/operations/{id}/offers"
-    
-                    sfr_offers:
-                        path: "/customer/1/offers"
-        hydrators:
-            Tms\Bundle\OperationBundle\Entity: OfferHydrator
+da_api_client:
+    api:
+        operation:
+            endpoint_root:  http://operation-manager.local.digifid.fr/api
+            security_token: 1x612aoluwckgc00c8kccgskwog4gw88osw8w4sko8o0owso80
 ```
 
 ## API METHODS ##
@@ -35,8 +17,9 @@ tms_rest_client:
 *Find all*
 ```php
 $hypermediaCollection = $this
-    ->get('tms_rest_client.crawlers.operation_manager.offers')
-    ->findAll($query, HypermediaCollection::AUTO_SWITCH_PAGE_OFF / ON)
+    ->get('tms_rest_client.hypermedia.crawler')
+    ->go('operation')
+    ->find('offers', $query)
 ;
 ```
 
@@ -113,6 +96,11 @@ $hypermediaCollection->hasLink($linkName);
 $hypermediaCollection->followLink($linkName, $linkParams, $isCrawlable);
 ```
 
+*Execute an action (insert, update, delete, ...)*
+```php
+$hypermediaItem->executeAction($name, array $params = array(), $method = '');
+```
+
 *Loop*
 ```php
 foreach ($hypermediaCollection as $hypermediaSingle) {
@@ -125,8 +113,9 @@ foreach ($hypermediaCollection as $hypermediaSingle) {
 *Find one*
 ```php
 $hypermediaItem = $this
-    ->get('tms_rest_client.crawlers.operation_manager.offers')
-    ->findOneBy(array('id' => 1))
+    ->get('tms_rest_client.hypermedia.crawler')
+    ->go('operation')
+    ->findOne('offers', $id)
 ;
 ```
 
@@ -143,6 +132,11 @@ $hypermediaItem->getMetaData($metadataName = null);
 *Get data*
 ```php
 $hypermediaItem->getData(HyperMediaSingle::HYDRATOR_MODE_ASSOC/HYDRATOR_MODE_OBJECT);
+```
+
+*Set a data field*
+```php
+$hypermediaItem->setDataField($field, $value);
 ```
 
 *Get the links*
@@ -165,21 +159,23 @@ $hypermediaItem->hasLink($linkName);
 $hypermediaItem->followLink($linkName, $linkParams, $isCrawlable);
 ```
 
-------------------------------------------
-
-*Delete an item*
+*Execute an action (insert, update, delete, ...)*
 ```php
-$this->get('tms_rest_client.operation.offers')->delete($hypermediaItem);
+$hypermediaItem->executeAction($name, array $params = array(), $method = '');
 ```
 
-*Update an item*
+### HYPERMEDIA INFO ###
+
+*Find one*
 ```php
-$this->get('tms_rest_client.operation.offers')->update($hypermediaItem);
+$hypermediaItem = $this
+    ->get('tms_rest_client.hypermedia.crawler')
+    ->go('operation')
+    ->getInfoPath('offers')
+;
 ```
 
-## HYDRATORS ##
-
-HydratorInterface implémentée par :
-
-* ArrayHydrator
-* ObjectHydrator
+*Execute an action (insert, update, delete, ...)*
+```php
+$hypermediaItem->executeAction($name, array $params = array(), $method = '');
+```
