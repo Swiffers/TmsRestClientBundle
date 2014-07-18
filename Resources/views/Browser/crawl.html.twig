@@ -2,7 +2,7 @@
 
 {% import _self as macros %}
 
-{% macro displayData(name, value, source, isLink, isAction, data) %}
+{% macro displayData(name, value, source, isLink, isAction, isData, data) %}
     {% import _self as macros %}
 
     {% if name is same as('links') %}
@@ -12,8 +12,15 @@
     {% if isAction != 0 %}
         {% set isAction = isAction - 1 %}
     {% endif %}
+    {% if isData != 0 %}
+        {% if isData == 3 and value.0 is not defined %}
+            {% set isData = 0 %}
+        {% else %}
+            {% set isData = isData - 1 %}
+        {% endif %}
+    {% endif %}
     {% if name is same as('actions') %}
-        {% set isAction = 3 %}
+        {% set isAction = 4 %}
     {% endif %}
 
     <li>
@@ -26,9 +33,9 @@
             <ul>
                 {% for embeddedName, embeddedValue in value %}
                     {% if embeddedName is same as('actions') and value.data is defined %}
-                        {% set data = value.data %}
-                    {% elseif embeddedName is same as('actions') %}
-                    plip
+                        {% set data = value.data %}plup
+                    {% elseif embeddedName is same as('data') %}
+                        {% set isData = 3 %}
                     {% endif %}
 
                     {% if isAction == 2 and (embeddedName is same as('requiredParams') or embeddedName is same as('optionalParams')) %}
@@ -44,7 +51,7 @@
                             </ul>
                         </li>
                     {% else %}
-                        {{ macros.displayData(embeddedName, embeddedValue, source, isLink, isAction, data) }}
+                        {{ macros.displayData(embeddedName, embeddedValue, source, isLink, isAction, isData, data) }}
                     {% endif %}
                 {% endfor %}
             </ul>
@@ -53,6 +60,11 @@
                     <input type="submit" value="Execute" />
                 </form>
             {% endif %}
+        {% elseif isData == 1 %}
+            {#% for embeddedName, embeddedValue in value %#}
+                {{ name }}:
+                {{ macros.displayHypermedia(value, source) }}
+            {#% endfor %#}
         {% else %}
             {% if isLink == 1 and name == 'href' %}
                 {{ name }}: <a href="{{ path('tms_restclient_browser_crawl', {url: value}) }}">{{ value }}</a>
@@ -71,34 +83,41 @@
     {% endif %}
 {% endmacro %}
 
-{% block content %}
-    {{ block('nav') }}
+{% macro displayHypermedia(hypermedia, source) %}
+    {% import _self as macros %}
 
     {% if hypermedia.metadata is defined %}
         <ul>
-            {{ macros.displayData('metadata', hypermedia.metadata, source, 0, 0) }}
+            {{ macros.displayData('metadata', hypermedia.metadata, source, 0, 0, 0) }}
         </ul>
     {% endif %}
 
-    {% if hypermedia.links is defined %}
+    {% if hypermedia.links is defined and hypermedia.links is not null %}
         <ul>
-            {{ macros.displayData('links', hypermedia.links, source, 0, 0) }}
+            {{ macros.displayData('links', hypermedia.links, source, 0, 0, 0) }}
         </ul>
     {% endif %}
 
-    {% if hypermedia.actions is defined %}
+    {% if hypermedia.actions is defined and hypermedia.actions is not null %}
         <ul>
             {% if hypermedia.data is defined %}
-                {{ macros.displayData('actions', hypermedia.actions, source, 0, 0, hypermedia.data) }}
+                {{ macros.displayData('actions', hypermedia.actions, source, 0, 0, 0, hypermedia.data) }}
             {% else %}
-                {{ macros.displayData('actions', hypermedia.actions, source, 0, 0) }}
+                {{ macros.displayData('actions', hypermedia.actions, source, 0, 0, 0) }}
             {% endif %}
         </ul>
     {% endif %}
 
-    {% if hypermedia.data is defined %}
+    {% if hypermedia.data is defined and hypermedia.data is not null %}
         <ul>
-            {{ macros.displayData('data', hypermedia.data, source, 0, 0) }}
+            {{ macros.displayData('data', hypermedia.data, source, 0, 0, 3) }}
         </ul>
     {% endif %}
+{% endmacro %}
+
+
+{% block content %}
+    {{ block('nav') }}
+
+    {{ macros.displayHypermedia(hypermedia, source) }}
 {% endblock %}
