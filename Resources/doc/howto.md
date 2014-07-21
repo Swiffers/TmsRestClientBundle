@@ -14,8 +14,8 @@ How to use
 You need to use the tms_rest_client.hypermedia.crawler service to retrieve
 an hypermedia collection. Several methods exist to do it :
 
-* `findAll($name, array $params)`
-* `crawle($path, array $params, $absolutePath = false)`
+* `find($name, array $params)`
+* `crawl($path, array $params, $absolutePath = false)`
 
 The crawler throws some exception of type ApiHttpResponseException if necessary.
 That's why the crawler use must be surrounded by try and catch.
@@ -34,19 +34,19 @@ try {
     $hypermediaCollection = $this
         ->get('tms_rest_client.hypermedia.crawler')
         ->go('operation')
-        ->crawle('offers')
+        ->crawl('offers')
     ;
 
     $hypermediaCollection = $this
         ->get('tms_rest_client.hypermedia.crawler')
         ->go('operation')
-        ->crawle('offers?limit=5')
+        ->crawl('offers?limit=5')
     ;
 
     $hypermediaCollection = $this
         ->get('tms_rest_client.hypermedia.crawler')
         ->go('operation')
-        ->crawle(
+        ->crawl(
             'http://operation-manager.local.digifid.fr/api/offers',
             array(),
             true
@@ -161,7 +161,8 @@ while($iterator->valid()) // Iterator is valid while there is a next item
 You need to use the tms_rest_client.hypermedia.crawler service to retrieve
 an hypermedia item. One method exists to do it :
 
-* `find($name, $id)`
+* `findOne($name, $id)` // Default key : ID
+* `findOne($name, $reference, 'reference')` // The third param specify the key
 
 The crawler throws some exception of type ApiHttpResponseException if necessary.
 That's why the crawler use must be surrounded by try and catch.
@@ -171,7 +172,7 @@ try {
     $hypermediaItem = $this
         ->get('tms_rest_client.hypermedia.crawler')
         ->go('operation')
-        ->find('offers', $id)
+        ->findOne('offers', $id)
     ;
 } catch (\Da\ApiClientBundle\Exception\ApiHttpResponseException $e) {
     switch ($e->getHttpCode()) {
