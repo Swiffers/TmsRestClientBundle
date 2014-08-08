@@ -33,7 +33,6 @@ class TmsRestClientExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-        $loader->load('hypermedia.yml');
 
         $container->setParameter('tms_rest_client.hypermedia.hydrator.item', Constants::SERIALIZER_CONTEXT_GROUP_ITEM);
         $container->setParameter('tms_rest_client.hypermedia.hydrator.collection', Constants::SERIALIZER_CONTEXT_GROUP_COLLECTION);
