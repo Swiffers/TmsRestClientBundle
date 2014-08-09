@@ -72,7 +72,7 @@ class CrawlingPath implements CrawlingPathInterface
      */
     public function findOne($path, $param, $absolutePath = false)
     {
-        $path = sprintf("%s/%s", $param, $slug);
+        $path = sprintf("%s/%s", $path, $param);
 
         $hypermedia = $this->crawl($path, array(), $absolutePath);
 
