@@ -22,13 +22,13 @@ interface CrawlingPathInterface
     /**
      * Find one.
      *
-     * @param string  $path The path.
-     * @param string  $slug The slug.
+     * @param string  $path  The path.
+     * @param string  $param The path parameter.
      * @param boolean $absolutePath Whether it is an absolute path or not.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
      */
-    function findOne($path, $slug, $absolutePath = false);
+    function findOne($path, $param, $absolutePath = false);
 
     /**
      * Find.
