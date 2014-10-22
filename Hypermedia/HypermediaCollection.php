@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
  * @author Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
+ * @author Nabil MANSOURI <nabil.mansouri@tessi.fr>
  */
 class HypermediaCollection extends AbstractHypermedia implements \IteratorAggregate
 {
@@ -31,8 +32,7 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     {
         $data = array();
 
-        foreach($this->getData() as $item)
-        {
+        foreach($this->getData() as $item) {
             $data[] = $item->getData();
         }
 
