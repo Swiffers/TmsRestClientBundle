@@ -36,5 +36,6 @@ class TmsRestClientExtension extends Extension
 
         $container->setParameter('tms_rest_client.hypermedia.hydrator.item', Constants::SERIALIZER_CONTEXT_GROUP_ITEM);
         $container->setParameter('tms_rest_client.hypermedia.hydrator.collection', Constants::SERIALIZER_CONTEXT_GROUP_COLLECTION);
+        $container->setParameter('tms_rest_client.hypermedia.hydrator.array', Constants::SERIALIZER_CONTEXT_GROUP_ARRAY);
     }
 }

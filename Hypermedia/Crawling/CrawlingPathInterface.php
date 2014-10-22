@@ -37,7 +37,7 @@ interface CrawlingPathInterface
      * @param array   $params The query parameters.
      * @param boolean $absolutePath Whether it is an absolute path or not.
      *
-     * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection The hypermedia.
+     * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
      */
     function find($path, array $params = array(), $absolutePath = false);
 
@@ -58,7 +58,7 @@ interface CrawlingPathInterface
      * @param array   $params       The query parameters.
      * @param boolean $absolutePath Whether it is an absolute path or not.
      *
-     * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection|\Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
+     * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
      */
     function crawl($path, array $params = array(), $absolutePath = false);
 

@@ -47,17 +47,19 @@ abstract class AbstractHypermedia
      */
     public function normalize(array $raw)
     {
-        $this->setMetadata($raw);
-        $this->setData($raw);
-        $this->setLinks($raw);
-        $this->setActions($raw);
+        $this
+            ->setMetadata($raw)
+            ->setData($raw)
+            ->setLinks($raw)
+            ->setActions($raw)
+        ;
     }
 
     /**
      * Set metadata
      *
      * @param array $raw
-     * @return $this;
+     * @return AbstractHypermedia
      */
     public function setMetadata(array $raw)
     {
@@ -66,13 +68,15 @@ abstract class AbstractHypermedia
         }
 
         $this->metadata = $raw['metadata'];
+
+        return $this;
     }
 
     /**
      * Set data
      *
      * @param array $raw
-     * @return $this;
+     * @return AbstractHypermedia
      */
     public function setData(array $raw)
     {
@@ -81,13 +85,15 @@ abstract class AbstractHypermedia
         }
 
         $this->data = isset($raw['data']) ? $raw['data'] : null;
+
+        return $this;
     }
 
     /**
      * Set links
      *
      * @param array $raw
-     * @return $this;
+     * @return AbstractHypermedia
      */
     public function setLinks(array $raw)
     {
@@ -104,6 +110,7 @@ abstract class AbstractHypermedia
      * Set actions
      *
      * @param array $raw
+     * @return AbstractHypermedia
      */
     public function setActions(array $raw)
     {
@@ -112,6 +119,8 @@ abstract class AbstractHypermedia
         }
 
         $this->actions = $raw['actions'];
+
+        return $this;
     }
 
     /**

@@ -3,6 +3,7 @@ parameters:
     tms_rest_client.hypermedia.crawling_path.class: Tms\Bundle\RestClientBundle\Hypermedia\Crawling\CrawlingPath
     tms_rest_client.hypermedia.hydrator.item.class: Tms\Bundle\RestClientBundle\Hypermedia\Hydratation\HypermediaItemHydrator
     tms_rest_client.hypermedia.hydrator.collection.class: Tms\Bundle\RestClientBundle\Hypermedia\Hydratation\HypermediaCollectionHydrator
+    tms_rest_client.hypermedia.hydrator.array.class: Tms\Bundle\RestClientBundle\Hypermedia\Hydratation\HypermediaArrayHydrator
     tms_rest_client.hypermedia.hydratation_handler.class: Tms\Bundle\RestClientBundle\Hypermedia\Hydratation\HypermediaHydratationHandler
 
 services:
@@ -26,6 +27,12 @@ services:
         public: false
         tags:
             - { name: tms_rest_client.hypermedia.hydrator, id: %tms_rest_client.hypermedia.hydrator.collection% }
+
+    tms_rest_client.hypermedia.hydrator.array:
+        class: %tms_rest_client.hypermedia.hydrator.array.class%
+        public: false
+        tags:
+            - { name: tms_rest_client.hypermedia.hydrator, id: %tms_rest_client.hypermedia.hydrator.array% }
 
     tms_rest_client.hypermedia.hydratation_handler:
         class: %tms_rest_client.hypermedia.hydratation_handler.class%

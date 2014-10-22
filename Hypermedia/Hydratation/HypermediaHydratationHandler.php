@@ -72,18 +72,15 @@ class HypermediaHydratationHandler implements HypermediaHydratationHandlerInterf
      */
     public function hydrate(array $hypermedia)
     {
+        $hydratorId = "tms_rest.array";
+
         if (isset($hypermedia['metadata'][Constants::SERIALIZER_CONTEXT_GROUP_NAME])) {
             $hydratorId = $hypermedia['metadata'][Constants::SERIALIZER_CONTEXT_GROUP_NAME];
-
-            $hypermedia = $this->getHydrator($hydratorId)->hydrate($hypermedia);
-            $hypermedia->setCrawler($this->crawler);
-
-            return $hypermedia;
         }
 
-        throw new \LogicException(sprintf(
-            'Unable to build hypermedia object: the field "%s" is not defined in hypermedia metadata.',
-            Constants::SERIALIZER_CONTEXT_GROUP_NAME
-        ));
+        $hypermedia = $this->getHydrator($hydratorId)->hydrate($hypermedia);
+        $hypermedia->setCrawler($this->crawler);
+
+        return $hypermedia;
     }
 }

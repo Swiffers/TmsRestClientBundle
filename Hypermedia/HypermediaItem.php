@@ -78,7 +78,7 @@ class HypermediaItem extends AbstractHypermedia
     public function getEmbeddedUrl($name)
     {
         $link = $this->getEmbeddedLink($name);
-        
+
         return $link['href'];
     }
 

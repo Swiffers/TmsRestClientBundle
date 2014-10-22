@@ -95,16 +95,7 @@ class CrawlingPath implements CrawlingPathInterface
     {
         $hypermedia = $this->crawl($path, $params, $absolutePath);
 
-        if ($hypermedia instanceof HypermediaCollection) {
-            return $hypermedia;
-        }
-
-        $class = get_class($hypermedia);
-
-        throw new \LogicException(sprintf(
-            'The method "find" returns a "\Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection", a "%s" given instead.',
-            $class ? $class : gettype($hypermedia)
-        ));
+        return $hypermedia;
     }
 
     /**
