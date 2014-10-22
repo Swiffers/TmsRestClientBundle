@@ -1,9 +1,10 @@
 <?php
 
 /**
- * 
+ *
  * @author:  Gabriel BONDAZ <gabriel.bondaz@idci-consulting.fr>
  * @author:  Pierre FERROLLIET <pierre.ferrolliet@idci-consulting.fr>
+ * @author:  Nabil MANSOURI <nabil.mansouri@tessi.fr>
  * @license: GPL
  *
  */
@@ -56,7 +57,7 @@ class HypermediaCollectionAdapter implements AdapterInterface
                 $offset,
                 $length
             ),
-            'links'    => $this->hypermediaCollection->getAllLinks()
+            'links'    => $this->hypermediaCollection->getLinks()
         );
     }
 }
