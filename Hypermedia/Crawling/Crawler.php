@@ -114,7 +114,7 @@ class Crawler implements CrawlerInterface
     protected function retrieveUrlParams($url)
     {
         $params = array();
-        $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url(urldecode($url));
 
         if (isset($parsedUrl['query'])) {
             $parameters = explode('&', $parsedUrl['query']);
