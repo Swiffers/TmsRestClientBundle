@@ -227,7 +227,7 @@ class CrawlingPath implements CrawlingPathInterface
             ->getContent(true)
         ;
 
-        if (is_array($result) && $result['metadata']) {
+        if (is_array($result) && isset($result['metadata'])) {
             $result = $this->hydratationHandler->hydrate($result);
         }
 
