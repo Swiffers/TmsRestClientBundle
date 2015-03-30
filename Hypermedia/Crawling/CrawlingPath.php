@@ -60,9 +60,17 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
+    public function getEndpointRoot()
+    {
+        return $this->apiClient->getEndpointRoot();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function matchPath($path)
     {
-        $endpointRoot = $this->apiClient->getEndpointRoot();
+        $endpointRoot = $this->getEndpointRoot();
 
         return $endpointRoot === substr($path, 0, strlen($endpointRoot));
     }
@@ -70,11 +78,11 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function findOne($path, $param, $absolutePath = false)
+    public function findOne($path, $param, array $headers = array())
     {
         $path = sprintf("%s/%s", $path, $param);
 
-        $hypermedia = $this->crawl($path, array(), $absolutePath);
+        $hypermedia = $this->crawl($path, array(), $headers);
 
         if ($hypermedia instanceof HypermediaItem) {
             return $hypermedia;
@@ -91,9 +99,9 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function find($path, array $params = array(), $absolutePath = false)
+    public function find($path, array $params = array(), array $headers = array())
     {
-        $hypermedia = $this->crawl($path, $params, $absolutePath);
+        $hypermedia = $this->crawl($path, $params, $headers);
 
         return $hypermedia;
     }
@@ -101,11 +109,11 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function getPathInfo($path, $absolutePath = false)
+    public function getPathInfo($path, array $headers = array())
     {
         $path = sprintf("%s/info", $path);
 
-        $hypermedia = $this->crawl($path, array(), $absolutePath);
+        $hypermedia = $this->crawl($path, array(), $headers);
 
         if ($hypermedia instanceof HypermediaItem) {
             return $hypermedia;
@@ -180,16 +188,16 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function crawl($path, array $params = array(), $absolutePath = false)
+    public function crawl($path, array $params = array(), array $headers = array())
     {
-        if (!$absolutePath && $path[0] !== '/') {
+        if ($path[0] !== '/') {
             $path = sprintf('/%s', $path);
         }
 
         $hypermedia = $this->hydratationHandler->hydrate(
             $this
                 ->apiClient
-                ->get($path, $params, array(), false, $absolutePath)
+                ->get($path, $params, $headers, false, false)
                 ->getContent(true)
         );
 
@@ -199,7 +207,7 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($path, $method, array $params = array())
+    public function execute($path, $method, array $params = array(), array $headers = array())
     {
         $class = new \ReflectionClass($this->apiClient);
 
@@ -212,18 +220,13 @@ class CrawlingPath implements CrawlingPathInterface
             ));
         }
 
-        // Handle absolute URL path.
-        if ($match = $this->matchPath($path)) {
-            $endpointRoot = $this->apiClient->getEndpointRoot();
-
-            $path = substr($path, strlen($endpointRoot));
-        } else if ($path[0] !== '/') {
+        if ($path[0] !== '/') {
             $path = sprintf('/%s', $path);
         }
 
         $result = $this
             ->apiClient
-            ->$method($path, $params)
+            ->$method($path, $params, $headers)
             ->getContent(true)
         ;
 

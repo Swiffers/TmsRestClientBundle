@@ -62,25 +62,34 @@ class Crawler implements CrawlerInterface
     /**
      * {@inheritdoc}
      */
-    public function crawl($url, array $params = array())
+    public function crawl($url, array $params = array(), array $headers = array())
     {
         $crawlingPath = $this->retrieveCrawlingPath($url);
         $params = array_merge($params, $this->retrieveUrlParams($url));
         $url = $this->retrieveBaseUrl($url, $params);
 
-        return $crawlingPath->crawl($url, $params, true);
+        return $crawlingPath->crawl(
+            $this->retrieveRelativeUrlPath($url, $crawlingPath),
+            $params,
+            $headers
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute($url, $method, array $params = array())
+    public function execute($url, $method, array $params = array(), array $headers = array())
     {
         $crawlingPath = $this->retrieveCrawlingPath($url);
         $params = array_merge($params, $this->retrieveUrlParams($url));
         $url = $this->retrieveBaseUrl($url, $params);
 
-        return $crawlingPath->execute($url, $method, $params);
+        return $crawlingPath->execute(
+            $this->retrieveRelativeUrlPath($url, $crawlingPath),
+            $method,
+            $params,
+            $headers
+        );
     }
 
     /**
@@ -131,7 +140,8 @@ class Crawler implements CrawlerInterface
     /**
      * Retrieve the base URL of an URL.
      *
-     * @param string $url The URL.
+     * @param string $url    The URL.
+     * @param array  $params The params.
      *
      * @return string The base URL.
      */
@@ -142,13 +152,39 @@ class Crawler implements CrawlerInterface
         $baseUrl = sprintf('%s://%s%s',
             $parsedUrl['scheme'],
             $parsedUrl['host'],
-            $parsedUrl['path']
+            $this->resolveUrlPath($parsedUrl['path'], $params)
         );
 
+        return $baseUrl;
+    }
+
+    /**
+     * Retrieve the path relative to a crawling path of an URL.
+     *
+     * @param string                $url          The URL.
+     * @param CrawlingPathInterface $crawlingPath The crawling path.
+     *
+     * @return string The relative path.
+     */
+    protected function retrieveRelativeUrlPath($url, CrawlingPathInterface $crawlingPath)
+    {
+        return substr($url, strlen($crawlingPath->getEndpointRoot()));
+    }
+
+    /**
+     * Resolve the path of an URL from params.
+     *
+     * @param string $path   The path.
+     * @param array  $params The params.
+     *
+     * @return string The resolved path.
+     */
+    protected function resolveUrlPath($path, array $params)
+    {
         foreach ($params as $key => $value) {
-            $baseUrl = str_replace(sprintf('{%s}', $key), $value, $baseUrl);
+            $path = str_replace(sprintf('{%s}', $key), $value, $path);
         }
 
-        return $baseUrl;
+        return $path;
     }
 }

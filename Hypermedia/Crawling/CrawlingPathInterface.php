@@ -11,6 +11,13 @@ namespace Tms\Bundle\RestClientBundle\Hypermedia\Crawling;
 interface CrawlingPathInterface
 {
     /**
+     * Get the endpoint root.
+     *
+     * @return string The endpoint root.
+     */
+    function getEndpointRoot();
+
+    /**
      * Whether or not a path is matching with this crawling path.
      *
      * @param string $path The path to match.
@@ -22,54 +29,55 @@ interface CrawlingPathInterface
     /**
      * Find one.
      *
-     * @param string  $path  The path.
-     * @param string  $param The path parameter.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
+     * @param string $path    The path.
+     * @param string $param   The path parameter.
+     * @param array  $headers The headers.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
      */
-    function findOne($path, $param, $absolutePath = false);
+    function findOne($path, $param, array $headers = array());
 
     /**
      * Find.
      *
-     * @param string  $path   The path.
-     * @param array   $params The query parameters.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
+     * @param string $path    The path.
+     * @param array  $params  The query parameters.
+     * @param array  $headers The headers.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
      */
-    function find($path, array $params = array(), $absolutePath = false);
+    function find($path, array $params = array(), array $headers = array());
 
     /**
      * Get the info of the path.
      *
-     * @param string  $path         The path.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
+     * @param string $path    The path.
+     * @param array  $headers The headers.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
      */
-    function getPathInfo($path, $absolutePath = false);
+    function getPathInfo($path, array $headers = array());
 
     /**
      * Crawl an URL.
      *
-     * @param string  $path         The path.
-     * @param array   $params       The query parameters.
-     * @param boolean $absolutePath Whether it is an absolute path or not.
+     * @param string $path    The path.
+     * @param array  $params  The query parameters.
+     * @param array  $headers The headers.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
      */
-    function crawl($path, array $params = array(), $absolutePath = false);
+    function crawl($path, array $params = array(), array $headers = array());
 
     /**
      * Execute an action.
      *
-     * @param string  $path         The path.
-     * @param string  $method       The HTTP method.
-     * @param array   $params       The query parameters.
+     * @param string $path    The path.
+     * @param string $method  The HTTP method.
+     * @param array  $params  The query parameters.
+     * @param array  $headers The headers.
      *
      * @return mixed The return of the execution.
      */
-    function execute($path, $method, array $params = array());
+    function execute($path, $method, array $params = array(), array $headers = array());
 }

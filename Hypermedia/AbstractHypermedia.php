@@ -260,14 +260,15 @@ abstract class AbstractHypermedia
     /**
      * Follow a link URL to retrieve new hypermedia object
      *
-     * @param string  $absoluteUrl
+     * @param string $absoluteUrl
      * @param array  $params
+     * @param array  $headers
      *
      * @return mixed HypermediaCollection OR HypermediaItem
      */
-    protected function followUrl($absoluteUrl, array $params = array())
+    protected function followUrl($absoluteUrl, array $params = array(), array $headers = array())
     {
-        return $this->crawler->crawl($absoluteUrl, $params, true);
+        return $this->crawler->crawl($absoluteUrl, $params, $headers);
     }
 
     /**
@@ -290,7 +291,7 @@ abstract class AbstractHypermedia
      *
      * @return mixed The result of the action
      */
-    public function executeAction($name, array $params = array(), $method = '')
+    public function executeAction($name, array $params = array(), $method = '', array $headers = array())
     {
         $action = null;
         $possibleActions = array();
@@ -395,6 +396,6 @@ abstract class AbstractHypermedia
             }
         }
 
-        return $this->crawler->execute($action['href'], $action['method'], $params, true);
+        return $this->crawler->execute($action['href'], $action['method'], $params, $headers);
     }
 }
