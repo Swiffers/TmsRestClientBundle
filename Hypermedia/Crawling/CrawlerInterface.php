@@ -22,21 +22,23 @@ interface CrawlerInterface
     /**
      * Crawl to an URL.
      *
-     * @param string $url The url to crawl to.
-     * @param array  $params The query parameters.
+     * @param string $url     The url to crawl to.
+     * @param array  $params  The query parameters.
+     * @param array  $headers The headers.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaCollection|\Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The retrieved hypermedia.
      */
-    function crawl($url, array $params = array());
+    function crawl($url, array $params = array(), array $headers = array());
 
     /**
      * Execute an action.
      *
-     * @param string $url    The URL.
-     * @param string $method The HTTP method.
-     * @param array  $params The query parameters.
+     * @param string $url     The URL.
+     * @param string $method  The HTTP method.
+     * @param array  $params  The query parameters.
+     * @param array  $headers The headers.
      *
      * @return mixed The return of the execution.
      */
-    function execute($url, $method, array $params = array());
+    function execute($url, $method, array $params = array(), array $headers = array());
 }
