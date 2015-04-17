@@ -11,6 +11,13 @@ namespace Tms\Bundle\RestClientBundle\Hypermedia\Crawling;
 interface CrawlingPathInterface
 {
     /**
+     * Set the crawler.
+     *
+     * @param CrawlerInterface $crawler The crawler.
+     */
+    function setCrawler(CrawlerInterface $crawler);
+
+    /**
      * Get the endpoint root.
      *
      * @return string The endpoint root.
