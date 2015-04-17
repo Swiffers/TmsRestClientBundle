@@ -32,6 +32,7 @@ class Crawler implements CrawlerInterface
     public function setCrawlingPath($id, CrawlingPathInterface $crawlingPath)
     {
         $this->crawlingPaths[$id] = $crawlingPath;
+        $crawlingPath->setCrawler($this);
     }
 
     /**

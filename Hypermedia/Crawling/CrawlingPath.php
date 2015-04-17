@@ -41,20 +41,24 @@ class CrawlingPath implements CrawlingPathInterface
      * Constructor
      *
      * @param HypermediaHydratationHandlerInterface $hydratationHandler The hydratation handler.
-     * @param CrawlerInterface                      $crawler            The crawler.
      * @param RestApiClientInterface                $apiClient          An api client.
      */
     public function __construct(
         HypermediaHydratationHandlerInterface $hydratationHandler,
-        CrawlerInterface $crawler,
         RestApiClientInterface $apiClient
     )
     {
-        $hydratationHandler->setCrawler($crawler);
-
         $this->hydratationHandler = $hydratationHandler;
-        $this->crawler = $crawler;
         $this->apiClient = $apiClient;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCrawler(CrawlerInterface $crawler)
+    {
+        $this->hydratationHandler->setCrawler($crawler);
+        $this->crawler = $crawler;
     }
 
     /**
