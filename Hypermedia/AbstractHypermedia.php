@@ -380,7 +380,7 @@ abstract class AbstractHypermedia
             }
 
             if (array_key_exists($paramName, $params)) {
-                if (!preg_match(sprintf('/^%s$/', $paramRequirements), $params[$paramName])) {
+                if (!empty($paramRequirements) && !preg_match(sprintf('/^%s$/', $paramRequirements), $params[$paramName])) {
                     throw new \LogicException(sprintf(
                         'The value "%s" of the parameter "%s" of the action "%s" must respect the requirements "%s".',
                         $params[$paramName],
