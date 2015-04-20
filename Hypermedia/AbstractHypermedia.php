@@ -295,6 +295,7 @@ abstract class AbstractHypermedia
     {
         $action = null;
         $possibleActions = array();
+        $shouldUseDataParams = 'PUT' === $action['method'] && empty($params);
 
         foreach ($this->actions as $actionName => $actionMethods) {
             $possibleActions[] = $actionName;
@@ -343,7 +344,7 @@ abstract class AbstractHypermedia
         }
 
         foreach ($action['requiredParams'] as $paramName => $paramRequirements) {
-            if (!isset($params[$paramName])) {
+            if ($shouldUseDataParams && !array_key_exists($paramName, $params)) {
                 if (isset($this->data[$paramName])) {
                     $params[$paramName] = $this->data[$paramName];
                 }
@@ -359,7 +360,7 @@ abstract class AbstractHypermedia
                 ));
             }
 
-            if (in_array(strtoupper($action['method']), array('PUT', 'PATCH'))) {
+            if (in_array(strtoupper($action['method']), array('PUT', 'PATCH')) && array_key_exists($paramName, $params)) {
                 $this->setDataField($paramName, $params[$paramName]);
             }
 
@@ -373,7 +374,7 @@ abstract class AbstractHypermedia
         }
 
         foreach ($action['optionalParams'] as $paramName => $paramRequirements) {
-            if (!array_key_exists($paramName, $params)) {
+            if ($shouldUseDataParams && !array_key_exists($paramName, $params)) {
                 if (array_key_exists($paramName, $this->data)) {
                     $params[$paramName] = $this->data[$paramName];
                 }
@@ -390,7 +391,7 @@ abstract class AbstractHypermedia
                     ));
                 }
 
-                if (in_array(strtoupper($action['method']), array('PUT', 'PATCH'))) {
+                if (in_array(strtoupper($action['method']), array('PUT', 'PATCH')) && array_key_exists($paramName, $params)) {
                     $this->setDataField($paramName, $params[$paramName]);
                 }
             }
