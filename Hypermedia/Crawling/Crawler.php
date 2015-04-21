@@ -183,7 +183,9 @@ class Crawler implements CrawlerInterface
     protected function resolveUrlPath($path, array $params)
     {
         foreach ($params as $key => $value) {
-            $path = str_replace(sprintf('{%s}', $key), $value, $path);
+            if (is_string($value) || is_int($value)) {
+                $path = str_replace(sprintf('{%s}', $key), $value, $path);
+            }
         }
 
         return $path;
