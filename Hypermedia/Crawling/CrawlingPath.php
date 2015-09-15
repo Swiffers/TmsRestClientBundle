@@ -82,11 +82,11 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function findOne($path, $param, array $headers = array())
+    public function findOne($path, $param, array $headers = array(), $noCache = false)
     {
         $path = sprintf("%s/%s", $path, $param);
 
-        $hypermedia = $this->crawl($path, array(), $headers);
+        $hypermedia = $this->crawl($path, array(), $headers, $noCache);
 
         if ($hypermedia instanceof HypermediaItem) {
             return $hypermedia;
@@ -103,9 +103,9 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function find($path, array $params = array(), array $headers = array())
+    public function find($path, array $params = array(), array $headers = array(), $noCache = false)
     {
-        $hypermedia = $this->crawl($path, $params, $headers);
+        $hypermedia = $this->crawl($path, $params, $headers, $noCache);
 
         return $hypermedia;
     }
@@ -192,20 +192,23 @@ class CrawlingPath implements CrawlingPathInterface
     /**
      * {@inheritdoc}
      */
-    public function crawl($path, array $params = array(), array $headers = array())
+    public function crawl($path, array $params = array(), array $headers = array(), $noCache = false)
     {
         if ($path[0] !== '/') {
             $path = sprintf('/%s', $path);
         }
 
-        $hypermedia = $this->hydratationHandler->hydrate(
-            $this
-                ->apiClient
-                ->get($path, $params, $headers, false, false)
-                ->getContent(true)
-        );
+        $result = $this
+            ->apiClient
+            ->get($path, $params, $headers, $noCache, false)
+            ->getContent(true)
+        ;
 
-        return $hypermedia;
+        if (is_array($result) && isset($result['metadata'])) {
+            $result = $this->hydratationHandler->hydrate($result);
+        }
+
+        return $result;
     }
 
     /**

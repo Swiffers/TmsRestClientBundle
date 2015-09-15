@@ -36,24 +36,26 @@ interface CrawlingPathInterface
     /**
      * Find one.
      *
-     * @param string $path    The path.
-     * @param string $param   The path parameter.
-     * @param array  $headers The headers.
+     * @param string  $path    The path.
+     * @param string  $param   The path parameter.
+     * @param array   $headers The headers.
+     * @param boolean $noCache To force the request without check if a cache response exist.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
      */
-    function findOne($path, $param, array $headers = array());
+    function findOne($path, $param, array $headers = array(), $noCache = false);
 
     /**
      * Find.
      *
-     * @param string $path    The path.
-     * @param array  $params  The query parameters.
-     * @param array  $headers The headers.
+     * @param string  $path    The path.
+     * @param array   $params  The query parameters.
+     * @param array   $headers The headers.
+     * @param boolean $noCache To force the request without check if a cache response exist.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
      */
-    function find($path, array $params = array(), array $headers = array());
+    function find($path, array $params = array(), array $headers = array(), $noCache = false);
 
     /**
      * Get the info of the path.
@@ -68,13 +70,14 @@ interface CrawlingPathInterface
     /**
      * Crawl an URL.
      *
-     * @param string $path    The path.
-     * @param array  $params  The query parameters.
-     * @param array  $headers The headers.
+     * @param string  $path    The path.
+     * @param array   $params  The query parameters.
+     * @param array   $headers The headers.
+     * @param boolean $noCache To force the request without check if a cache response exist.
      *
      * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
      */
-    function crawl($path, array $params = array(), array $headers = array());
+    function crawl($path, array $params = array(), array $headers = array(), $noCache = false);
 
     /**
      * Execute an action.
