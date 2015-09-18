@@ -41,7 +41,7 @@ interface CrawlingPathInterface
      * @param array   $headers The headers.
      * @param boolean $noCache To force the request without check if a cache response exist.
      *
-     * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem The hypermedia.
+     * @return \Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem|array The result.
      */
     function findOne($path, $param, array $headers = array(), $noCache = false);
 
@@ -53,7 +53,7 @@ interface CrawlingPathInterface
      * @param array   $headers The headers.
      * @param boolean $noCache To force the request without check if a cache response exist.
      *
-     * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
+     * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia|array The results.
      */
     function find($path, array $params = array(), array $headers = array(), $noCache = false);
 
@@ -75,7 +75,7 @@ interface CrawlingPathInterface
      * @param array   $headers The headers.
      * @param boolean $noCache To force the request without check if a cache response exist.
      *
-     * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia The hypermedia.
+     * @return \Tms\Bundle\RestClientBundle\Hypermedia\AbstractHypermedia|array The result.
      */
     function crawl($path, array $params = array(), array $headers = array(), $noCache = false);
 
