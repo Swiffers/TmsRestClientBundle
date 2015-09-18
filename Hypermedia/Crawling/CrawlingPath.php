@@ -86,17 +86,17 @@ class CrawlingPath implements CrawlingPathInterface
     {
         $path = sprintf("%s/%s", $path, $param);
 
-        $hypermedia = $this->crawl($path, array(), $headers, $noCache);
+        $result = $this->crawl($path, array(), $headers, $noCache);
 
-        if ($hypermedia instanceof HypermediaItem) {
-            return $hypermedia;
+        if (is_array($result) || $result instanceof HypermediaItem) {
+            return $result;
         }
 
-        $class = get_class($hypermedia);
+        $class = get_class($result);
 
         throw new \LogicException(sprintf(
-            'The method "findOne" returns a "\Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem", a "%s" given instead.',
-            $class ? $class : gettype($hypermedia)
+            'The method "findOne" should return a "\Tms\Bundle\RestClientBundle\Hypermedia\HypermediaItem" or an array, a "%s" given instead.',
+            $class ? $class : gettype($result)
         ));
     }
 
@@ -105,9 +105,7 @@ class CrawlingPath implements CrawlingPathInterface
      */
     public function find($path, array $params = array(), array $headers = array(), $noCache = false)
     {
-        $hypermedia = $this->crawl($path, $params, $headers, $noCache);
-
-        return $hypermedia;
+        return $this->crawl($path, $params, $headers, $noCache);
     }
 
     /**
