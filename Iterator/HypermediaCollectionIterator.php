@@ -45,6 +45,10 @@ class HypermediaCollectionIterator implements \Iterator
      */
     public function key()
     {
+        if (0 === $this->hypermediaCollection->getMetadata('pageCount')) {
+            return $this->cursor;
+        }
+
         return ($this->cursor % $this->hypermediaCollection->getMetadata('pageCount'));
     }
 
