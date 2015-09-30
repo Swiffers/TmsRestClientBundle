@@ -36,12 +36,8 @@ class HypermediaCollectionIterator implements \Iterator
     public function current()
     {
         $data = $this->hypermediaCollection->getData();
- 
-        if(!$this->valid()) {
-            throw new NotFoundHttpException();
-        }
 
-        return $data[$this->cursor];
+        return $data[$this->key()];
     }
 
     /**
@@ -49,50 +45,24 @@ class HypermediaCollectionIterator implements \Iterator
      */
     public function key()
     {
-        return $this->cursor;
+        return ($this->cursor % $this->hypermediaCollection->getMetadata('pageCount'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasNext()
-    {
-        if ($this->cursor >= count($this->hypermediaCollection->getData())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasPrevious()
-    {
-        if ($this->cursor-1 < 0) {
-            return false;
-        }
-
-        return true;
-    }
- 
     /**
      * {@inheritdoc}
      */
     public function next()
     {
-        $this->cursor++;
+        if ($this->cursor < $this->hypermediaCollection->getMetadata('totalCount')) {
+            $this->cursor++;
+        }
 
-        return $this;
-    }
+        if (0 !== $this->cursor && 0 === $this->cursor % $this->hypermediaCollection->getMetadata('pageCount')) {
+            if ($this->hypermediaCollection->hasNextPage()) {
+                $this->hypermediaCollection = $this->hypermediaCollection->nextPage();
+            }
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function previous()
-    {
-        $this->cursor--;
- 
         return $this;
     }
 
@@ -101,15 +71,11 @@ class HypermediaCollectionIterator implements \Iterator
      */
     public function rewind()
     {
-        $this->cursor = 0;
-    }
+        if ($this->hypermediaCollection->hasPreviousPage()) {
+            $this->hypermediaCollection = $this->hypermediaCollection->firstPage();
+        }
 
-    /**
-     * Unwind the cursor to the last index
-     */
-    public function unwind()
-    {
-        $this->cursor = count($this->hypermediaCollection->getData());
+        $this->cursor = 0;
     }
 
     /**
@@ -119,7 +85,9 @@ class HypermediaCollectionIterator implements \Iterator
     {
         $data = $this->hypermediaCollection->getData();
 
-        return isset($data[$this->cursor]);
+        return (
+            $this->cursor < $this->hypermediaCollection->getMetadata('totalCount') &&
+            isset($data[$this->key()])
+        );
     }
-
 }
