@@ -32,11 +32,11 @@ class HypermediaCollection extends AbstractHypermedia implements \IteratorAggreg
     {
         $data = array();
 
-        foreach($this->getData() as $item) {
+        foreach ($this->getData() as $item) {
             $data[] = $item->getData();
         }
 
-        return $this->data;
+        return $data;
     }
 
     /**
