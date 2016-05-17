@@ -110,6 +110,6 @@ class HypermediaCollectionRestAdapter implements AdapterInterface
         $this->offset = $offset;
         $this->length = $length;
 
-        return $this->getCollection();
+        return $this->getCollection()->getArrayData();
     }
 }
