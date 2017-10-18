@@ -23,7 +23,7 @@ services:
             - { name: tms_rest_client.hypermedia.hydrator, id: '%tms_rest_client.hypermedia.hydrator.item%' }
 
     tms_rest_client.hypermedia.hydrator.collection:
-        class: '%tms_rest_client.hypermedia.hydrator.collection.class%''
+        class: '%tms_rest_client.hypermedia.hydrator.collection.class%'
         public: false
         tags:
             - { name: tms_rest_client.hypermedia.hydrator, id: '%tms_rest_client.hypermedia.hydrator.collection%' }
