@@ -8,32 +8,32 @@ parameters:
 
 services:
     tms_rest_client.hypermedia.crawler:
-        class: %tms_rest_client.hypermedia.crawler.class%
+        class: '%tms_rest_client.hypermedia.crawler.class%'
 
     tms_rest_client.hypermedia.crawling_path:
-        class: %tms_rest_client.hypermedia.crawling_path.class%
-        arguments: [@tms_rest_client.hypermedia.hydratation_handler, null, null]
+        class: '%tms_rest_client.hypermedia.crawling_path.class%'
+        arguments: ["@tms_rest_client.hypermedia.hydratation_handler", null, null]
         abstract: true
         public: false
 
     tms_rest_client.hypermedia.hydrator.item:
-        class: %tms_rest_client.hypermedia.hydrator.item.class%
+        class: '%tms_rest_client.hypermedia.hydrator.item.class%'
         public: false
         tags:
-            - { name: tms_rest_client.hypermedia.hydrator, id: %tms_rest_client.hypermedia.hydrator.item% }
+            - { name: tms_rest_client.hypermedia.hydrator, id: '%tms_rest_client.hypermedia.hydrator.item%' }
 
     tms_rest_client.hypermedia.hydrator.collection:
-        class: %tms_rest_client.hypermedia.hydrator.collection.class%
+        class: '%tms_rest_client.hypermedia.hydrator.collection.class%''
         public: false
         tags:
-            - { name: tms_rest_client.hypermedia.hydrator, id: %tms_rest_client.hypermedia.hydrator.collection% }
+            - { name: tms_rest_client.hypermedia.hydrator, id: '%tms_rest_client.hypermedia.hydrator.collection%' }
 
     tms_rest_client.hypermedia.hydrator.array:
-        class: %tms_rest_client.hypermedia.hydrator.array.class%
+        class: '%tms_rest_client.hypermedia.hydrator.array.class%'
         public: false
         tags:
-            - { name: tms_rest_client.hypermedia.hydrator, id: %tms_rest_client.hypermedia.hydrator.array% }
+            - { name: tms_rest_client.hypermedia.hydrator, id: '%tms_rest_client.hypermedia.hydrator.array%' }
 
     tms_rest_client.hypermedia.hydratation_handler:
-        class: %tms_rest_client.hypermedia.hydratation_handler.class%
+        class: '%tms_rest_client.hypermedia.hydratation_handler.class%'
         public: false
