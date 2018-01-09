@@ -130,7 +130,7 @@ class Crawler implements CrawlerInterface
             $parameters = explode('&', $parsedUrl['query']);
 
             foreach ($parameters as $parameter) {
-                preg_match('/(?<parameter_name>[^=]?)=(?<parameter_value>.*)/', $parameter, $matches);
+                preg_match('/(?<parameter_name>[^=]+)=(?<parameter_value>.*)/', $parameter, $matches);
                 $params[$matches['parameter_name']] = $matches['parameter_value'];
             }
         }
