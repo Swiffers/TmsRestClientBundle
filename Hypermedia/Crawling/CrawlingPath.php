@@ -73,13 +73,10 @@ class CrawlingPath implements CrawlingPathInterface
      */
     public function matchPath($path)
     {
-        // Remove schemes.
-        $endpointRoot = strstr($this->getEndpointRoot(), '://');
-        $path = strstr($path, '://');
+        $endpointRootSchemeless = strstr($this->getEndpointRoot(), '://');
+        $pathSchemeless = strstr($path, '://');
 
-        $path = substr($path, 0, strlen($endpointRoot));
-
-        return $endpointRoot === $path;
+        return $endpointRootSchemeless === substr($pathSchemeless, 0, strlen($endpointRootSchemeless));
     }
 
     /**
