@@ -46,8 +46,7 @@ class CrawlingPath implements CrawlingPathInterface
     public function __construct(
         HypermediaHydratationHandlerInterface $hydratationHandler,
         RestApiClientInterface $apiClient
-    )
-    {
+    ) {
         $this->hydratationHandler = $hydratationHandler;
         $this->apiClient = $apiClient;
     }
@@ -74,9 +73,10 @@ class CrawlingPath implements CrawlingPathInterface
      */
     public function matchPath($path)
     {
-        $endpointRoot = $this->getEndpointRoot();
+        $endpointRootSchemeless = strstr($this->getEndpointRoot(), '://');
+        $pathSchemeless = strstr($path, '://');
 
-        return $endpointRoot === substr($path, 0, strlen($endpointRoot));
+        return $endpointRootSchemeless === substr($pathSchemeless, 0, strlen($endpointRootSchemeless));
     }
 
     /**
